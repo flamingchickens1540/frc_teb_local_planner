@@ -24,6 +24,6 @@ public class PoseSE2 extends Object {
 
     @Override
     public String toString() {
-        return "Java PoseSE2 (X "+this.x+" Y "+this.y+" Theta "+this.theta;
+        return "Java PoseSE2 (X "+this.x+" Y "+this.y+" Theta "+this.theta+")";
     }
 }
