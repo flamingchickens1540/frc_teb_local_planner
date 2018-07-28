@@ -5,7 +5,7 @@
 #include "teb_jni_interface.h"
 #include "include/teb_local_planner/pose_se2.h"
 
-#include "java/TebInterface.h"
+#include "teb-java-example/headers/TebInterface.h"
 
 teb_local_planner::PoseSE2 poseSE2FromJobject(JNIEnv *env, const jobject &obj) {
     jclass PoseSE2Class = env->GetObjectClass(obj);
