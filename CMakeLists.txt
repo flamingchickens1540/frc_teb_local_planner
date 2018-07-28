@@ -5,7 +5,6 @@ project(jni_teb_local_planner)
 set(CMAKE_BUILD_TYPE Release) #None, Debug, Release, RelWithDebInfo, MinSizeRel
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-
 message(STATUS "System: ${CMAKE_SYSTEM}")
 ## System dependencies are found with CMake's conventions
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
@@ -15,8 +14,6 @@ find_package(JNI REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system thread graph)
 find_package(SUITESPARSE REQUIRED)
 find_package(G2O REQUIRED)
-
-INCLUDE_DIRECTORIES( ${Boost_INCLUDE_DIR} )
 
 # Eigen3 FindScript Backward compatibility (ubuntu saucy)
 # Since FindEigen.cmake is deprecated starting from jade.
@@ -30,11 +27,29 @@ elseif (EXISTS "FindEigen.cmake")
   e.g. by adding it to ${PROJECT_SOURCE_DIR}/cmake_modules.")
 endif (EXISTS "FindEigen3.cmake")
 
-set(EXTERNAL_INCLUDE_DIRS ${Eigen_INCLUDE_DIRS} ${SUITESPARSE_INCLUDE_DIRS} ${G2O_INCLUDE_DIR})
-set(EXTERNAL_LIBS ${SUITESPARSE_LIBRARIES} ${G2O_LIBRARIES})
+set(EXTERNAL_INCLUDE_DIRS
+        ${Eigen_INCLUDE_DIRS}
+        ${SUITESPARSE_INCLUDE_DIRS}
+        ${G2O_INCLUDE_DIR}
+        ${JNI_INCLUDE_DIRS}
+        ${Boost_INCLUDE_DIR}
+        ${PROJECT_SOURCE_DIR}/include/
 
-INCLUDE_DIRECTORIES( ${EXTERNAL_INCLUDE_DIRS} )
+        # Iffy includes
+        /opt/ros/kinetic/include/
+        /usr/include/eigen3/
+        /usr/include/pcl-1.7/
+        /usr/include/suitesparse/
+        )
 
+include_directories( ${EXTERNAL_INCLUDE_DIRS} )
+
+set(EXTERNAL_LIBS
+        ${Boost_LIBRARIES}
+        ${SUITESPARSE_LIBRARIES}
+        ${G2O_LIBRARIES}
+        )
+link_libraries(${EXTERNAL_LIBS})
 
 IF(NOT MSVC)
   include(CheckCXXCompilerFlag)
@@ -50,7 +65,6 @@ else()
 endif()
 endif()
 
-
 set(SOURCE_FILES teb_jni_interface.cpp src/timed_elastic_band.cpp
         src/optimal_planner.cpp
         src/obstacles.cpp
@@ -61,20 +75,6 @@ set(SOURCE_FILES teb_jni_interface.cpp src/timed_elastic_band.cpp
 #        src/teb_local_planner_ros.cpp
 #        src/graph_search.cpp
         )
+
 add_library(jni_teb_local_planner SHARED ${SOURCE_FILES})
-
-
-include_directories(${JNI_INCLUDE_DIRS})
-include_directories(/usr/include/eigen3/)
-include_directories(/opt/ros/kinetic/include/)
-include_directories(include/)
-include_directories(/usr/include/pcl-1.7/)
-include_directories(/usr/include/suitesparse/)
-
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-TARGET_LINK_LIBRARIES( jni_teb_local_planner LINK_PUBLIC ${Boost_LIBRARIES} )
-TARGET_LINK_LIBRARIES( jni_teb_local_planner LINK_PUBLIC ${G2O_LIBRARIES} )
-TARGET_LINK_LIBRARIES( jni_teb_local_planner LINK_PUBLIC ${SUITESPARSE_LIBRARIES} )
 
