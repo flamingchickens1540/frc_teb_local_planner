@@ -103,7 +103,7 @@ public:
         }
 
 
-        ROS_ASSERT_MSG(cfg_->hcp.h_signature_prescaler>0.1 && cfg_->hcp.h_signature_prescaler<=1, "Only a prescaler on the interval (0.1,1] ist allowed.");
+//        ROS_ASSERT_MSG(cfg_->hcp.h_signature_prescaler>0.1 && cfg_->hcp.h_signature_prescaler<=1, "Only a prescaler on the interval (0.1,1] ist allowed.");
 
         // guess values for f0
         // paper proposes a+b=N-1 && |a-b|<=1, 1...N obstacles
@@ -202,8 +202,8 @@ public:
             if (diff_real<=cfg_->hcp.h_signature_threshold && diff_imag<=cfg_->hcp.h_signature_threshold)
                 return true; // Found! Homotopy class already exists, therefore nothing added
         }
-        else
-            ROS_ERROR("Cannot compare HSignature equivalence classes with types other than HSignature.");
+//        else
+//            ROS_ERROR("Cannot compare HSignature equivalence classes with types other than HSignature.");
 
         return false;
     }
@@ -309,8 +309,8 @@ public:
             next_transition_time += (nextpose-pose).norm() / cfg_->robot.max_vel_x; // Approximate the time, if no time is known
           else // otherwise use the time information from the teb trajectory
           {
-            if (std::distance(path_iter, path_end) != std::distance(timediff_iter, timediff_end.get()))
-              ROS_ERROR("Size of poses and timediff vectors does not match. This is a bug.");
+//            if (std::distance(path_iter, path_end) != std::distance(timediff_iter, timediff_end.get()))
+//              ROS_ERROR("Size of poses and timediff vectors does not match. This is a bug.");
             next_transition_time += (*timediff_iter)->dt();
           }
 
@@ -375,8 +375,8 @@ public:
         return true; // Found! Homotopy class already exists, therefore nothing added
         }
       }
-      else
-          ROS_ERROR("Cannot compare HSignature3d equivalence classes with types other than HSignature3d.");
+//      else
+//          ROS_ERROR("Cannot compare HSignature3d equivalence classes with types other than HSignature3d.");
 
       return false;
     }

@@ -85,7 +85,7 @@ void HomotopyClassPlanner::setVisualization(TebVisualizationPtr visualization)
 
 bool HomotopyClassPlanner::plan(const std::vector<geometry_msgs::PoseStamped>& initial_plan, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
 {
-  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
+  //ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
 
   // store initial plan for further initializations (must be valid for the lifetime of this object or clearPlanner() is called!)
   initial_plan_ = &initial_plan;
@@ -99,7 +99,7 @@ bool HomotopyClassPlanner::plan(const std::vector<geometry_msgs::PoseStamped>& i
 
 bool HomotopyClassPlanner::plan(const tf::Pose& start, const tf::Pose& goal, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
 {
-  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
+  //ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
   PoseSE2 start_pose(start);
   PoseSE2 goal_pose(goal);
   return plan(start_pose, goal_pose, start_vel, free_goal_vel);
@@ -107,7 +107,7 @@ bool HomotopyClassPlanner::plan(const tf::Pose& start, const tf::Pose& goal, con
 
 bool HomotopyClassPlanner::plan(const PoseSE2& start, const PoseSE2& goal, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
 {
-  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
+  //ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
 
   // Update old TEBs with new start, goal and velocity
   updateAllTEBs(&start, &goal, start_vel);
@@ -173,7 +173,7 @@ void HomotopyClassPlanner::visualize()
       }
     }
   }
-  else ROS_DEBUG("Ignoring HomotopyClassPlanner::visualize() call, since no visualization class was instantiated before.");
+  //else ROS_DEBUG("Ignoring HomotopyClassPlanner::visualize() call, since no visualization class was instantiated before.");
 }
 
 
@@ -196,7 +196,7 @@ bool HomotopyClassPlanner::addEquivalenceClassIfNew(const EquivalenceClassPtr& e
 
   if (!eq_class->isValid())
   {
-    ROS_WARN("HomotopyClassPlanner: Ignoring invalid H-signature");
+    //ROS_WARN("HomotopyClassPlanner: Ignoring invalid H-signature");
     return false;
   }
 
@@ -300,7 +300,7 @@ void HomotopyClassPlanner::updateReferenceTrajectoryViaPoints(bool all_trajector
 
   if(equivalence_classes_.size() < tebs_.size())
   {
-    ROS_ERROR("HomotopyClassPlanner::updateReferenceTrajectoryWithViaPoints(): Number of h-signatures does not match number of trajectories.");
+    //ROS_ERROR("HomotopyClassPlanner::updateReferenceTrajectoryWithViaPoints(): Number of h-signatures does not match number of trajectories.");
     return;
   }
 
@@ -399,7 +399,7 @@ void HomotopyClassPlanner::updateAllTEBs(const PoseSE2* start, const PoseSE2* go
   // Since all Tebs are sharing the same fixed goal pose, just take the first candidate:
   if (!tebs_.empty() && (goal->position() - tebs_.front()->teb().BackPose().position()).norm() >= cfg_->trajectory.force_reinit_new_goal_dist)
   {
-      ROS_DEBUG("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
+      //ROS_DEBUG("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
       tebs_.clear();
       equivalence_classes_.clear();
   }
@@ -445,7 +445,7 @@ void HomotopyClassPlanner::deleteTebDetours(double threshold)
 
   if (tebs_.size() != equivalence_classes_.size())
   {
-    ROS_ERROR("HomotopyClassPlanner::deleteTebDetours(): number of equivalence classes (%lu) and trajectories (%lu) does not match.", equivalence_classes_.size(), tebs_.size());
+    //ROS_ERROR("HomotopyClassPlanner::deleteTebDetours(): number of equivalence classes (%lu) and trajectories (%lu) does not match.", equivalence_classes_.size(), tebs_.size());
     return;
   }
 
@@ -473,7 +473,7 @@ void HomotopyClassPlanner::deleteTebDetours(double threshold)
       it_teb = tebs_.erase(it_teb);
       it_eqclasses = equivalence_classes_.erase(it_eqclasses);
       modified = true;
-      ROS_DEBUG("HomotopyClassPlanner::deleteTebDetours(): removing candidate that was not optimized successfully");
+      //ROS_DEBUG("HomotopyClassPlanner::deleteTebDetours(): removing candidate that was not optimized successfully");
     }
 
     if (!modified)
@@ -495,7 +495,7 @@ TebOptimalPlannerPtr HomotopyClassPlanner::getInitialPlanTEB()
         else
         {
             initial_plan_teb_.reset(); // reset pointer for next call
-            ROS_DEBUG("initial teb not found, trying to find a match according to the cached equivalence class");
+            //ROS_DEBUG("initial teb not found, trying to find a match according to the cached equivalence class");
         }
     }
 
@@ -519,11 +519,11 @@ TebOptimalPlannerPtr HomotopyClassPlanner::getInitialPlanTEB()
                 }
             }
          }
-         else
-             ROS_ERROR("HomotopyClassPlanner::getInitialPlanTEB(): number of equivalence classes (%lu) and number of trajectories (%lu) does not match.", equivalence_classes_.size(), tebs_.size());
+//         else
+             //ROS_ERROR("HomotopyClassPlanner::getInitialPlanTEB(): number of equivalence classes (%lu) and number of trajectories (%lu) does not match.", equivalence_classes_.size(), tebs_.size());
     }
-    else
-        ROS_DEBUG("HomotopyClassPlanner::getInitialPlanTEB(): initial TEB not found in the set of available trajectories.");
+//    else
+//        ROS_DEBUG("HomotopyClassPlanner::getInitialPlanTEB(): initial TEB not found in the set of available trajectories.");
 
     return TebOptimalPlannerPtr();
 }
@@ -614,21 +614,21 @@ TebOptimalPlannerPtr HomotopyClassPlanner::selectBestTeb()
 //   }
 
     // check if we are allowed to change
-    if (last_best_teb && best_teb_ != last_best_teb)
-    {
-      ros::Time now = ros::Time::now();
-      if ((now-last_eq_class_switching_time_).toSec() > cfg_->hcp.switching_blocking_period)
-      {
-        last_eq_class_switching_time_ = now;
-      }
-      else
-      {
-        ROS_DEBUG("HomotopyClassPlanner::selectBestTeb(): Switching equivalence classes blocked (check parameter switching_blocking_period.");
-        // block switching, so revert best_teb_
-        best_teb_ = last_best_teb;
-      }
-
-    }
+//    if (last_best_teb && best_teb_ != last_best_teb)
+//    {
+//      ros::Time now = ros::Time::now();
+//      if ((now-last_eq_class_switching_time_).toSec() > cfg_->hcp.switching_blocking_period)
+//      {
+//        last_eq_class_switching_time_ = now;
+//      }
+//      else
+//      {
+//        //ROS_DEBUG("HomotopyClassPlanner::selectBestTeb(): Switching equivalence classes blocked (check parameter switching_blocking_period.");
+//        // block switching, so revert best_teb_
+//        best_teb_ = last_best_teb;
+//      }
+//
+//    }
 
 
     return best_teb_;

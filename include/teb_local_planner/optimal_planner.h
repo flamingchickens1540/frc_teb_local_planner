@@ -73,7 +73,9 @@
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <tf/transform_datatypes.h>
-#include <teb_local_planner/TrajectoryMsg.h>
+//#include <teb_local_planner/TrajectoryMsg.h>
+#include <fake_geometry.h>
+
 
 #include <nav_msgs/Odometry.h>
 #include <limits.h>
@@ -165,7 +167,7 @@ public:
    *		      otherwise the final velocity will be zero (default: false)
    * @return \c true if planning was successful, \c false otherwise
    */
-  virtual bool plan(const std::vector<geometry_msgs::PoseStamped>& initial_plan, const geometry_msgs::Twist* start_vel = NULL, bool free_goal_vel=false);
+//  virtual bool plan(const std::vector<geometry_msgs::PoseStamped>& initial_plan, const fake_geometry_msgs::Twist* start_vel = NULL, bool free_goal_vel=false);
   
   /**
    * @brief Plan a trajectory between a given start and goal pose (tf::Pose version)
@@ -183,7 +185,7 @@ public:
    *		      otherwise the final velocity will be zero (default: false)
    * @return \c true if planning was successful, \c false otherwise
    */
-  virtual bool plan(const tf::Pose& start, const tf::Pose& goal, const geometry_msgs::Twist* start_vel = NULL, bool free_goal_vel=false);
+  virtual bool plan(const tf::Pose& start, const tf::Pose& goal, const fake_geometry_msgs::Twist* start_vel = NULL, bool free_goal_vel=false);
   
   /**
    * @brief Plan a trajectory between a given start and goal pose
@@ -201,7 +203,7 @@ public:
    *		      otherwise the final velocity will be zero (default: false)
    * @return \c true if planning was successful, \c false otherwise
    */
-  virtual bool plan(const PoseSE2& start, const PoseSE2& goal, const geometry_msgs::Twist* start_vel = NULL, bool free_goal_vel=false);
+  virtual bool plan(const PoseSE2& start, const PoseSE2& goal, const fake_geometry_msgs::Twist* start_vel = NULL, bool free_goal_vel=false);
   
   
   /**
@@ -257,14 +259,14 @@ public:
    * @param vel_start Current start velocity (e.g. the velocity of the robot, only linear.x and angular.z are used,
    *                  for holonomic robots also linear.y)
    */
-  void setVelocityStart(const geometry_msgs::Twist& vel_start);
+  void setVelocityStart(const fake_geometry_msgs::Twist& vel_start);
   
   /**
    * @brief Set the desired final velocity at the trajectory's goal pose.
    * @remarks Call this function only if a non-zero velocity is desired and if \c free_goal_vel is set to \c false in plan()
    * @param vel_goal twist message containing the translational and angular final velocity 
    */
-  void setVelocityGoal(const geometry_msgs::Twist& vel_goal);
+  void setVelocityGoal(const fake_geometry_msgs::Twist& vel_goal);
   
   /**
    * @brief Set the desired final velocity at the trajectory's goal pose to be the maximum velocity limit
@@ -477,7 +479,7 @@ public:
    * to the next step refer to getVelocityCommand().
    * @param[out] velocity_profile velocity profile will be written to this vector (after clearing any existing content) with the size=no_poses+1
    */
-  void getVelocityProfile(std::vector<geometry_msgs::Twist>& velocity_profile) const;
+  void getVelocityProfile(std::vector<fake_geometry_msgs::Twist>& velocity_profile) const;
   
     /**
    * @brief Return the complete trajectory including poses, velocity profiles and temporal information
@@ -490,7 +492,7 @@ public:
    * @todo The acceleration profile is not added at the moment.
    * @param[out] trajectory the resulting trajectory
    */
-  void getFullTrajectory(std::vector<TrajectoryPointMsg>& trajectory) const;
+//  void getFullTrajectory(std::vector<TrajectoryPointMsg>& trajectory) const;
   
   /**
    * @brief Check whether the planned trajectory is feasible or not.
@@ -505,10 +507,10 @@ public:
    * @return \c true, if the robot footprint along the first part of the trajectory intersects with 
    *         any obstacle in the costmap, \c false otherwise.
    */
-  virtual bool isTrajectoryFeasible(base_local_planner::CostmapModel* costmap_model, const std::vector<geometry_msgs::Point>& footprint_spec, double inscribed_radius = 0.0,
-          double circumscribed_radius=0.0, int look_ahead_idx=-1);
-  
-  
+//  virtual bool isTrajectoryFeasible(base_local_planner::CostmapModel* costmap_model, const std::vector<geometry_msgs::Point>& footprint_spec, double inscribed_radius = 0.0,
+//          double circumscribed_radius=0.0, int look_ahead_idx=-1);
+//
+//
   /**
    * @brief Check if the planner suggests a shorter horizon (e.g. to resolve problems)
    * 
@@ -694,8 +696,8 @@ protected:
   TimedElasticBand teb_; //!< Actual trajectory object
   RobotFootprintModelPtr robot_model_; //!< Robot model
   boost::shared_ptr<g2o::SparseOptimizer> optimizer_; //!< g2o optimizer for trajectory optimization
-  std::pair<bool, geometry_msgs::Twist> vel_start_; //!< Store the initial velocity at the start pose
-  std::pair<bool, geometry_msgs::Twist> vel_goal_; //!< Store the final velocity at the goal pose
+  std::pair<bool, fake_geometry_msgs::Twist> vel_start_; //!< Store the initial velocity at the start pose
+  std::pair<bool, fake_geometry_msgs::Twist> vel_goal_; //!< Store the final velocity at the goal pose
 
   bool initialized_; //!< Keeps track about the correct initialization of this class
   bool optimized_; //!< This variable is \c true as long as the last optimization has been completed successful

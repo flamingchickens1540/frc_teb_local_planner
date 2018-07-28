@@ -133,7 +133,7 @@ public:
    */
   double& TimeDiff(int index)
   {
-    ROS_ASSERT(index<sizeTimeDiffs()); 
+//    ROS_ASSERT(index<sizeTimeDiffs()); 
     return timediff_vec_.at(index)->dt();
   }
   
@@ -144,7 +144,7 @@ public:
    */
   const double& TimeDiff(int index) const
   {
-    ROS_ASSERT(index<sizeTimeDiffs()); 
+    //ROS_ASSERT(index<sizeTimeDiffs()); 
     return timediff_vec_.at(index)->dt();
   }
   
@@ -155,7 +155,7 @@ public:
    */
   PoseSE2& Pose(int index) 
   {
-    ROS_ASSERT(index<sizePoses());
+    //ROS_ASSERT(index<sizePoses());
     return pose_vec_.at(index)->pose();
   }
   
@@ -166,7 +166,7 @@ public:
    */
   const PoseSE2& Pose(int index) const 
   {
-    ROS_ASSERT(index<sizePoses());
+    //ROS_ASSERT(index<sizePoses());
     return pose_vec_.at(index)->pose();
   }
   
@@ -197,7 +197,7 @@ public:
    */ 
   VertexPose* PoseVertex(int index) 
   {
-    ROS_ASSERT(index<sizePoses());
+    //ROS_ASSERT(index<sizePoses());
     return pose_vec_.at(index);
   }
   
@@ -208,7 +208,7 @@ public:
    */  
   VertexTimeDiff* TimeDiffVertex(int index) 
   {
-    ROS_ASSERT(index<sizeTimeDiffs()); 
+    //ROS_ASSERT(index<sizeTimeDiffs()); 
     return timediff_vec_.at(index);
   }
   
@@ -426,7 +426,7 @@ public:
   bool initTrajectoryToGoal(const std::vector<geometry_msgs::PoseStamped>& plan, double max_vel_x, bool estimate_orient=false, int min_samples = 3, bool guess_backwards_motion = false);
 
 
-  ROS_DEPRECATED bool initTEBtoGoal(const PoseSE2& start, const PoseSE2& goal, double diststep=0, double timestep=1, int min_samples = 3, bool guess_backwards_motion = false)
+  bool initTEBtoGoal(const PoseSE2& start, const PoseSE2& goal, double diststep=0, double timestep=1, int min_samples = 3, bool guess_backwards_motion = false)
   {
     ROS_WARN_ONCE("initTEBtoGoal is deprecated and has been replaced by initTrajectoryToGoal. The signature has changed: timestep has been replaced by max_vel_x. \
                    this deprecated method sets max_vel_x = 1. Please update your code.");
@@ -434,7 +434,7 @@ public:
   }
 
   template<typename BidirIter, typename Fun>
-  ROS_DEPRECATED bool initTEBtoGoal(BidirIter path_start, BidirIter path_end, Fun fun_position, double max_vel_x, double max_vel_theta,
+  bool initTEBtoGoal(BidirIter path_start, BidirIter path_end, Fun fun_position, double max_vel_x, double max_vel_theta,
           boost::optional<double> max_acc_x, boost::optional<double> max_acc_theta,
           boost::optional<double> start_orientation, boost::optional<double> goal_orientation, int min_samples = 3, bool guess_backwards_motion = false)
   {
@@ -442,12 +442,12 @@ public:
                                                 max_acc_x, max_acc_theta, start_orientation, goal_orientation, min_samples, guess_backwards_motion);
   }
 
-  ROS_DEPRECATED bool initTEBtoGoal(const std::vector<geometry_msgs::PoseStamped>& plan, double dt, bool estimate_orient=false, int min_samples = 3, bool guess_backwards_motion = false)
-  {
-    ROS_WARN_ONCE("initTEBtoGoal is deprecated and has been replaced by initTrajectoryToGoal. The signature has changed: dt has been replaced by max_vel_x. \
-                   this deprecated method sets max_vel = 1. Please update your code.");
-    return initTrajectoryToGoal(plan, dt, estimate_orient, min_samples, guess_backwards_motion);
-  }
+//  bool initTEBtoGoal(const std::vector<geometry_msgs::PoseStamped>& plan, double dt, bool estimate_orient=false, int min_samples = 3, bool guess_backwards_motion = false)
+//  {
+//    ROS_WARN_ONCE("initTEBtoGoal is deprecated and has been replaced by initTrajectoryToGoal. The signature has changed: dt has been replaced by max_vel_x. \
+//                   this deprecated method sets max_vel = 1. Please update your code.");
+//    return initTrajectoryToGoal(plan, dt, estimate_orient, min_samples, guess_backwards_motion);
+//  }
 
   
   //@}
