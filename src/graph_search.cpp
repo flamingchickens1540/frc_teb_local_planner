@@ -100,10 +100,10 @@ void lrKeyPointGraph::createGraph(const PoseSE2& start, const PoseSE2& goal, dou
 
   if (diff.norm()<cfg_->goal_tolerance.xy_goal_tolerance)
   {
-    ROS_DEBUG("HomotopyClassPlanner::createProbRoadmapGraph(): xy-goal-tolerance already reached.");
+//    ROS_DEBUG("HomotopyClassPlanner::createProbRoadmapGraph(): xy-goal-tolerance already reached.");
     if (hcp_->getTrajectoryContainer().empty())
     {
-      ROS_INFO("HomotopyClassPlanner::createProbRoadmapGraph(): Initializing a small straight line to just correct orientation errors.");
+//      ROS_INFO("HomotopyClassPlanner::createProbRoadmapGraph(): Initializing a small straight line to just correct orientation errors.");
       hcp_->addAndInitNewTeb(start, goal, start_velocity);
     }
     return;
@@ -179,7 +179,7 @@ void lrKeyPointGraph::createGraph(const PoseSE2& start, const PoseSE2& goal, dou
           // check angle
           if (start_orient_vec.dot(keypoint_dist) <= obstacle_heading_threshold)
           {
-            ROS_DEBUG("createGraph() - deleted edge: limit_obstacle_heading");
+//            ROS_DEBUG("createGraph() - deleted edge: limit_obstacle_heading");
             continue;
           }
         }
@@ -227,10 +227,10 @@ void ProbRoadmapGraph::createGraph(const PoseSE2& start, const PoseSE2& goal, do
 
   if (start_goal_dist<cfg_->goal_tolerance.xy_goal_tolerance)
   {
-    ROS_DEBUG("HomotopyClassPlanner::createProbRoadmapGraph(): xy-goal-tolerance already reached.");
+//    ROS_DEBUG("HomotopyClassPlanner::createProbRoadmapGraph(): xy-goal-tolerance already reached.");
     if (hcp_->getTrajectoryContainer().empty())
     {
-      ROS_INFO("HomotopyClassPlanner::createProbRoadmapGraph(): Initializing a small straight line to just correct orientation errors.");
+//      ROS_INFO("HomotopyClassPlanner::createProbRoadmapGraph(): Initializing a small straight line to just correct orientation errors.");
       hcp_->addAndInitNewTeb(start, goal, start_velocity);
     }
     return;

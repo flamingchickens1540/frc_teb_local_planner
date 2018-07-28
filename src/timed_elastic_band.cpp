@@ -49,7 +49,7 @@ TimedElasticBand::TimedElasticBand()
 
 TimedElasticBand::~TimedElasticBand()
 {
-  ROS_DEBUG("Destructor Timed_Elastic_Band...");
+  //ROS_DEBUG("Destructor Timed_Elastic_Band...");
   clearTimedElasticBand();
 }
 
@@ -90,8 +90,8 @@ void TimedElasticBand::addPoseAndTimeDiff(double x, double y, double angle, doub
     addPose(x,y,angle,false);
     addTimeDiff(dt,false);
   }
-  else 
-    ROS_ERROR("Method addPoseAndTimeDiff: Add one single Pose first. Timediff describes the time difference between last conf and given conf");
+//  else
+    //ROS_ERROR("Method addPoseAndTimeDiff: Add one single Pose first. Timediff describes the time difference between last conf and given conf");
   return;
 }
 
@@ -104,7 +104,7 @@ void TimedElasticBand::addPoseAndTimeDiff(const PoseSE2& pose, double dt)
     addPose(pose,false);
     addTimeDiff(dt,false);
   } else
-    ROS_ERROR("Method addPoseAndTimeDiff: Add one single Pose first. Timediff describes the time difference between last conf and given conf");
+//    ROS_ERROR("Method addPoseAndTimeDiff: Add one single Pose first. Timediff describes the time difference between last conf and given conf");
   return;
 }
 
@@ -115,21 +115,21 @@ void TimedElasticBand::addPoseAndTimeDiff(const Eigen::Ref<const Eigen::Vector2d
     addPose(position, theta,false);
     addTimeDiff(dt,false);
   } else 
-    ROS_ERROR("Method addPoseAndTimeDiff: Add one single Pose first. Timediff describes the time difference between last conf and given conf");
+//    ROS_ERROR("Method addPoseAndTimeDiff: Add one single Pose first. Timediff describes the time difference between last conf and given conf");
   return;
 }
 
 
 void TimedElasticBand::deletePose(int index)
 {
-  ROS_ASSERT(index<pose_vec_.size());
+//  ROS_ASSERT(index<pose_vec_.size());
   delete pose_vec_.at(index);
   pose_vec_.erase(pose_vec_.begin()+index);
 }
 
 void TimedElasticBand::deletePoses(int index, int number)
 {
-  ROS_ASSERT(index+number<=(int)pose_vec_.size());
+//  ROS_ASSERT(index+number<=(int)pose_vec_.size());
   for (int i = index; i<index+number; ++i)
     delete pose_vec_.at(i);
   pose_vec_.erase(pose_vec_.begin()+index, pose_vec_.begin()+index+number);
@@ -137,14 +137,14 @@ void TimedElasticBand::deletePoses(int index, int number)
 
 void TimedElasticBand::deleteTimeDiff(int index)
 {
-  ROS_ASSERT(index<(int)timediff_vec_.size());
+//  ROS_ASSERT(index<(int)timediff_vec_.size());
   delete timediff_vec_.at(index);
   timediff_vec_.erase(timediff_vec_.begin()+index);
 }
 
 void TimedElasticBand::deleteTimeDiffs(int index, int number)
 {
-  ROS_ASSERT(index+number<=timediff_vec_.size());
+//  ROS_ASSERT(index+number<=timediff_vec_.size());
   for (int i = index; i<index+number; ++i)
     delete timediff_vec_.at(i);
   timediff_vec_.erase(timediff_vec_.begin()+index, timediff_vec_.begin()+index+number);
@@ -189,13 +189,13 @@ void TimedElasticBand::clearTimedElasticBand()
 
 void TimedElasticBand::setPoseVertexFixed(int index, bool status)
 {
-  ROS_ASSERT(index<sizePoses());
+//  ROS_ASSERT(index<sizePoses());
   pose_vec_.at(index)->setFixed(status);   
 }
 
 void TimedElasticBand::setTimeDiffVertexFixed(int index, bool status)
 {
-  ROS_ASSERT(index<sizeTimeDiffs());
+//  ROS_ASSERT(index<sizeTimeDiffs());
   timediff_vec_.at(index)->setFixed(status);
 }
 
@@ -256,7 +256,7 @@ double TimedElasticBand::getSumOfAllTimeDiffs() const
 
 double TimedElasticBand::getSumOfTimeDiffsUpToIdx(int index) const
 {
-  ROS_ASSERT(index<=timediff_vec_.size());
+//  ROS_ASSERT(index<=timediff_vec_.size());
 
   double time = 0;
 
@@ -318,7 +318,7 @@ bool TimedElasticBand::initTrajectoryToGoal(const PoseSE2& start, const PoseSE2&
     // if number of samples is not larger than min_samples, insert manually
     if ( sizePoses() < min_samples-1 )
     {
-      ROS_DEBUG("initTEBtoGoal(): number of generated samples is less than specified by min_samples. Forcing the insertion of more samples...");
+//      ROS_DEBUG("initTEBtoGoal(): number of generated samples is less than specified by min_samples. Forcing the insertion of more samples...");
       while (sizePoses() < min_samples-1) // subtract goal point that will be added later
       {
         // simple strategy: interpolate between the current pose and the goal
@@ -335,80 +335,80 @@ bool TimedElasticBand::initTrajectoryToGoal(const PoseSE2& start, const PoseSE2&
   }
   else // size!=0
   {
-    ROS_WARN("Cannot init TEB between given configuration and goal, because TEB vectors are not empty or TEB is already initialized (call this function before adding states yourself)!");
-    ROS_WARN("Number of TEB configurations: %d, Number of TEB timediffs: %d",(unsigned int) sizePoses(),(unsigned int) sizeTimeDiffs());
+    //ROS_WARN("Cannot init TEB between given configuration and goal, because TEB vectors are not empty or TEB is already initialized (call this function before adding states yourself)!");
+    //ROS_WARN("Number of TEB configurations: %d, Number of TEB timediffs: %d",(unsigned int) sizePoses(),(unsigned int) sizeTimeDiffs());
     return false;
   }
   return true;
 }
 
 
-bool TimedElasticBand::initTrajectoryToGoal(const std::vector<geometry_msgs::PoseStamped>& plan, double max_vel_x, bool estimate_orient, int min_samples, bool guess_backwards_motion)
-{
-  
-  if (!isInit())
-  {
-    PoseSE2 start(plan.front().pose);
-    PoseSE2 goal(plan.back().pose);
-
-    double dt = 0.1;
-    
-    addPose(start); // add starting point with given orientation
-    setPoseVertexFixed(0,true); // StartConf is a fixed constraint during optimization
-
-    bool backwards = false;
-    if (guess_backwards_motion && (goal.position()-start.position()).dot(start.orientationUnitVec()) < 0) // check if the goal is behind the start pose (w.r.t. start orientation)
-        backwards = true;
-    // TODO: dt ~ max_vel_x_backwards for backwards motions
-    
-    for (int i=1; i<(int)plan.size()-1; ++i)
-    {
-        double yaw;
-        if (estimate_orient)
-        {
-            // get yaw from the orientation of the distance vector between pose_{i+1} and pose_{i}
-            double dx = plan[i+1].pose.position.x - plan[i].pose.position.x;
-            double dy = plan[i+1].pose.position.y - plan[i].pose.position.y;
-            yaw = std::atan2(dy,dx);
-            if (backwards)
-                yaw = g2o::normalize_theta(yaw+M_PI);
-        }
-        else 
-        {
-            yaw = tf::getYaw(plan[i].pose.orientation);
-        }
-        PoseSE2 intermediate_pose(plan[i].pose.position.x, plan[i].pose.position.y, yaw);
-        if (max_vel_x > 0) dt = (intermediate_pose.position()-BackPose().position()).norm()/max_vel_x;
-        addPoseAndTimeDiff(intermediate_pose, dt);
-    }
-    
-    // if number of samples is not larger than min_samples, insert manually
-    if ( sizePoses() < min_samples-1 )
-    {
-      ROS_DEBUG("initTEBtoGoal(): number of generated samples is less than specified by min_samples. Forcing the insertion of more samples...");
-      while (sizePoses() < min_samples-1) // subtract goal point that will be added later
-      {
-        // simple strategy: interpolate between the current pose and the goal
-        PoseSE2 intermediate_pose = PoseSE2::average(BackPose(), goal);
-        if (max_vel_x > 0) dt = (intermediate_pose.position()-BackPose().position()).norm()/max_vel_x;
-        addPoseAndTimeDiff( intermediate_pose, dt ); // let the optimier correct the timestep (TODO: better initialization
-      }
-    }
-    
-    // Now add final state with given orientation
-    if (max_vel_x > 0) dt = (goal.position()-BackPose().position()).norm()/max_vel_x;
-    addPoseAndTimeDiff(goal, dt);
-    setPoseVertexFixed(sizePoses()-1,true); // GoalConf is a fixed constraint during optimization
-  }
-  else // size!=0
-  {
-    ROS_WARN("Cannot init TEB between given configuration and goal, because TEB vectors are not empty or TEB is already initialized (call this function before adding states yourself)!");
-    ROS_WARN("Number of TEB configurations: %d, Number of TEB timediffs: %d", sizePoses(), sizeTimeDiffs());
-    return false;
-  }
-  
-  return true;
-}
+//bool TimedElasticBand::initTrajectoryToGoal(const std::vector<geometry_msgs::PoseStamped>& plan, double max_vel_x, bool estimate_orient, int min_samples, bool guess_backwards_motion)
+//{
+//
+//  if (!isInit())
+//  {
+//    PoseSE2 start(plan.front().pose);
+//    PoseSE2 goal(plan.back().pose);
+//
+//    double dt = 0.1;
+//
+//    addPose(start); // add starting point with given orientation
+//    setPoseVertexFixed(0,true); // StartConf is a fixed constraint during optimization
+//
+//    bool backwards = false;
+//    if (guess_backwards_motion && (goal.position()-start.position()).dot(start.orientationUnitVec()) < 0) // check if the goal is behind the start pose (w.r.t. start orientation)
+//        backwards = true;
+//    // TODO: dt ~ max_vel_x_backwards for backwards motions
+//
+//    for (int i=1; i<(int)plan.size()-1; ++i)
+//    {
+//        double yaw;
+//        if (estimate_orient)
+//        {
+//            // get yaw from the orientation of the distance vector between pose_{i+1} and pose_{i}
+//            double dx = plan[i+1].pose.position.x - plan[i].pose.position.x;
+//            double dy = plan[i+1].pose.position.y - plan[i].pose.position.y;
+//            yaw = std::atan2(dy,dx);
+//            if (backwards)
+//                yaw = g2o::normalize_theta(yaw+M_PI);
+//        }
+//        else
+//        {
+//            yaw = tf::getYaw(plan[i].pose.orientation);
+//        }
+//        PoseSE2 intermediate_pose(plan[i].pose.position.x, plan[i].pose.position.y, yaw);
+//        if (max_vel_x > 0) dt = (intermediate_pose.position()-BackPose().position()).norm()/max_vel_x;
+//        addPoseAndTimeDiff(intermediate_pose, dt);
+//    }
+//
+//    // if number of samples is not larger than min_samples, insert manually
+//    if ( sizePoses() < min_samples-1 )
+//    {
+//      //ROS_DEBUG("initTEBtoGoal(): number of generated samples is less than specified by min_samples. Forcing the insertion of more samples...");
+//      while (sizePoses() < min_samples-1) // subtract goal point that will be added later
+//      {
+//        // simple strategy: interpolate between the current pose and the goal
+//        PoseSE2 intermediate_pose = PoseSE2::average(BackPose(), goal);
+//        if (max_vel_x > 0) dt = (intermediate_pose.position()-BackPose().position()).norm()/max_vel_x;
+//        addPoseAndTimeDiff( intermediate_pose, dt ); // let the optimier correct the timestep (TODO: better initialization
+//      }
+//    }
+//
+//    // Now add final state with given orientation
+//    if (max_vel_x > 0) dt = (goal.position()-BackPose().position()).norm()/max_vel_x;
+//    addPoseAndTimeDiff(goal, dt);
+//    setPoseVertexFixed(sizePoses()-1,true); // GoalConf is a fixed constraint during optimization
+//  }
+//  else // size!=0
+//  {
+//    //ROS_WARN("Cannot init TEB between given configuration and goal, because TEB vectors are not empty or TEB is already initialized (call this function before adding states yourself)!");
+//    //ROS_WARN("Number of TEB configurations: %d, Number of TEB timediffs: %d", sizePoses(), sizeTimeDiffs());
+//    return false;
+//  }
+//
+//  return true;
+//}
 
 
 int TimedElasticBand::findClosestTrajectoryPose(const Eigen::Ref<const Eigen::Vector2d>& ref_point, double* distance, int begin_idx) const
@@ -562,7 +562,7 @@ bool TimedElasticBand::detectDetoursBackwards(double threshold) const
     Eigen::Vector2d orient_vector(cos( Pose(i).theta() ), sin( Pose(i).theta() ) );
     if (orient_vector.dot(d_start_goal) < threshold)
     {	
-      ROS_DEBUG("detectDetoursBackwards() - mark TEB for deletion: start-orientation vs startgoal-vec");
+      //ROS_DEBUG("detectDetoursBackwards() - mark TEB for deletion: start-orientation vs startgoal-vec");
       return true; // backward direction found
     }
   }
@@ -648,14 +648,14 @@ bool TimedElasticBand::isTrajectoryInsideRegion(double radius, double max_dist_b
         
         if (dist_sq > radius_sq)
         {
-            ROS_INFO("outside robot");
+            //ROS_INFO("outside robot");
             return false;
         }
         
         // check behind the robot with a different distance, if specified (or >=0)
         if (max_dist_behind_robot >= 0 && dist_vec.dot(robot_orient) < 0 && dist_sq > max_dist_behind_robot_sq)
         {
-            ROS_INFO("outside robot behind");
+            //ROS_INFO("outside robot behind");
             return false;
         }
         

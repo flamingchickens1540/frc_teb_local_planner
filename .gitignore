@@ -1,3 +1,8 @@
 .svn
 .kdev4
 *.kdev4
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.so
+*.cbp

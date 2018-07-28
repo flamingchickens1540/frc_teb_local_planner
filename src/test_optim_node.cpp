@@ -58,8 +58,14 @@ boost::shared_ptr< dynamic_reconfigure::Server<TebLocalPlannerReconfigureConfig>
 ros::Subscriber custom_obst_sub;
 ros::Subscriber via_points_sub;
 ros::Subscriber clicked_points_sub;
+ros::Subscriber initial_pose_sub;
+ros::Subscriber goal_pose_sub;
 std::vector<ros::Subscriber> obst_vel_subs;
 unsigned int no_fixed_obstacles;
+PoseSE2 initial_pose;
+PoseSE2 goal_pose;
+
+bool goaldestflag = false;
 
 // =========== Function declarations =============
 void CB_mainCycle(const ros::TimerEvent& e);
@@ -71,6 +77,9 @@ void CB_obstacle_marker(const visualization_msgs::InteractiveMarkerFeedbackConst
 void CB_clicked_points(const geometry_msgs::PointStampedConstPtr& point_msg);
 void CB_via_points(const nav_msgs::Path::ConstPtr& via_points_msg);
 void CB_setObstacleVelocity(const geometry_msgs::TwistConstPtr& twist_msg, const unsigned int id);
+
+//void CB_initial_pose(const geometry_msgs::PoseWithCovarianceStampedConstPtr& initial_msg);
+void CB_goal_pose(const geometry_msgs::PoseStampedConstPtr &goal_msg);
 
 
 // =============== Main function =================
@@ -96,8 +105,11 @@ int main( int argc, char** argv )
   
   // setup callback for clicked points (in rviz) that are considered as via-points
   clicked_points_sub = n.subscribe("/clicked_point", 5, CB_clicked_points);
-  
-  // setup callback for via-points (callback overwrites previously set via-points)
+
+    //  initial_pose_sub = n.subscribe("/initialpose", 1, CB_initial_pose);
+    goal_pose_sub = n.subscribe("/move_base_simple/goal", 1, CB_goal_pose);
+
+    // setup callback for via-points (callback overwrites previously set via-points)
   via_points_sub = n.subscribe("via_points", 1, CB_via_points);
 
   // interactive marker server for simulated dynamic obstacles
@@ -116,17 +128,20 @@ int main( int argc, char** argv )
   vel = Eigen::Vector2d(-0.3, -0.2);
   obst_vector.at(1)->setCentroidVelocity(vel);
 
-  /*
-  PolygonObstacle* polyobst = new PolygonObstacle;
-  polyobst->pushBackVertex(1, -1);
-  polyobst->pushBackVertex(0, 1);
-  polyobst->pushBackVertex(1, 1);
-  polyobst->pushBackVertex(2, 1);
- 
-  polyobst->finalizePolygon();
-  obst_vector.emplace_back(polyobst);
-  */
-  
+    /*
+    PolygonObstacle* polyobst = new PolygonObstacle;
+    polyobst->pushBackVertex(1, -1);
+    polyobst->pushBackVertex(0, 1);
+    polyobst->pushBackVertex(1, 1);
+    polyobst->pushBackVertex(2, 1);
+
+    polyobst->finalizePolygon();
+    obst_vector.emplace_back(polyobst);
+    */
+
+    initial_pose = PoseSE2(-4, 0, 0);
+    goal_pose = PoseSE2(4, 0, 0);
+
   for (unsigned int i=0; i<obst_vector.size(); ++i)
   {
     // setup callbacks for setting obstacle velocities
@@ -165,7 +180,29 @@ int main( int argc, char** argv )
 // Planning loop
 void CB_mainCycle(const ros::TimerEvent& e)
 {
-  planner->plan(PoseSE2(-4,0,0), PoseSE2(4,0,0)); // hardcoded start and goal for testing purposes
+    planner->plan(initial_pose, goal_pose); // hardcoded start and goal for testing purposes
+}
+
+//void CB_initial_pose(const geometry_msgs::PoseWithCovarianceStampedConstPtr& initial_msg)
+//{
+//    tf::Matrix3x3 m(tf::Quaternion(initial_msg->pose.pose.orientation.x, initial_msg->pose.pose.orientation.y, initial_msg->pose.pose.orientation.z, initial_msg->pose.pose.orientation.w));
+//    double roll, pitch, yaw;
+//    m.getRPY(roll, pitch, yaw);
+//    goal_pose = PoseSE2(initial_msg->pose.pose.position.x, initial_msg->pose.pose.position.y, yaw);
+//}
+
+void CB_goal_pose(const geometry_msgs::PoseStampedConstPtr &goal_msg) {
+    tf::Matrix3x3 m(
+            tf::Quaternion(goal_msg->pose.orientation.x, goal_msg->pose.orientation.y, goal_msg->pose.orientation.z,
+                           goal_msg->pose.orientation.w));
+    double roll, pitch, yaw;
+    m.getRPY(roll, pitch, yaw);
+    if (goaldestflag) {
+        goal_pose = PoseSE2(goal_msg->pose.position.x, goal_msg->pose.position.y, yaw);
+    } else {
+        initial_pose = PoseSE2(goal_msg->pose.position.x, goal_msg->pose.position.y, yaw);
+    }
+    goaldestflag = !goaldestflag;
 }
 
 // Visualization loop
@@ -240,19 +277,19 @@ void CB_obstacle_marker(const visualization_msgs::InteractiveMarkerFeedbackConst
   std::stringstream ss(feedback->marker_name);
   unsigned int index;
   ss >> index;
-  
-  if (index>=no_fixed_obstacles) 
+
+    if (index >= no_fixed_obstacles)
     return;
   PointObstacle* pobst = static_cast<PointObstacle*>(obst_vector.at(index).get());
-  pobst->position() = Eigen::Vector2d(feedback->pose.position.x,feedback->pose.position.y);	  
+    pobst->position() = Eigen::Vector2d(feedback->pose.position.x, feedback->pose.position.y);
 }
 
 void CB_customObstacle(const costmap_converter::ObstacleArrayMsg::ConstPtr& obst_msg)
 {
   // resize such that the vector contains only the fixed obstacles specified inside the main function
   obst_vector.resize(no_fixed_obstacles);
-  
-  // Add custom obstacles obtained via message (assume that all obstacles coordiantes are specified in the default planning frame)  
+
+    // Add custom obstacles obtained via message (assume that all obstacles coordiantes are specified in the default planning frame)
   for (size_t i = 0; i < obst_msg->obstacles.size(); ++i)
   {
     if (obst_msg->obstacles.at(i).polygon.points.size() == 1 )

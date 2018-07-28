@@ -217,7 +217,7 @@ bool TebOptimalPlanner::optimizeTEB(int iterations_innerloop, int iterations_out
   return true;
 }
 
-void TebOptimalPlanner::setVelocityStart(const geometry_msgs::Twist& vel_start)
+void TebOptimalPlanner::setVelocityStart(const fake_geometry_msgs::Twist& vel_start)
 {
   vel_start_.first = true;
   vel_start_.second.linear.x = vel_start.linear.x;
@@ -225,55 +225,55 @@ void TebOptimalPlanner::setVelocityStart(const geometry_msgs::Twist& vel_start)
   vel_start_.second.angular.z = vel_start.angular.z;
 }
 
-void TebOptimalPlanner::setVelocityGoal(const geometry_msgs::Twist& vel_goal)
+void TebOptimalPlanner::setVelocityGoal(const fake_geometry_msgs::Twist& vel_goal)
 {
   vel_goal_.first = true;
   vel_goal_.second = vel_goal;
 }
 
-bool TebOptimalPlanner::plan(const std::vector<geometry_msgs::PoseStamped>& initial_plan, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
-{    
-  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
-  if (!teb_.isInit())
-  {
-    // init trajectory
-    teb_.initTrajectoryToGoal(initial_plan, cfg_->robot.max_vel_x, cfg_->trajectory.global_plan_overwrite_orientation, cfg_->trajectory.min_samples, cfg_->trajectory.allow_init_with_backwards_motion);
-  } 
-  else // warm start
-  {
-    PoseSE2 start_(initial_plan.front().pose);
-    PoseSE2 goal_(initial_plan.back().pose);
-    if (teb_.sizePoses()>0 && (goal_.position() - teb_.BackPose().position()).norm() < cfg_->trajectory.force_reinit_new_goal_dist) // actual warm start!
-      teb_.updateAndPruneTEB(start_, goal_, cfg_->trajectory.min_samples); // update TEB
-    else // goal too far away -> reinit
-    {
-      ROS_DEBUG("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
-      teb_.clearTimedElasticBand();
-      teb_.initTrajectoryToGoal(initial_plan, cfg_->robot.max_vel_x, true, cfg_->trajectory.min_samples, cfg_->trajectory.allow_init_with_backwards_motion);
-    }
-  }
-  if (start_vel)
-    setVelocityStart(*start_vel);
-  if (free_goal_vel)
-    setVelocityGoalFree();
-  else
-    vel_goal_.first = true; // we just reactivate and use the previously set velocity (should be zero if nothing was modified)
-  
-  // now optimize
-  return optimizeTEB(cfg_->optim.no_inner_iterations, cfg_->optim.no_outer_iterations);
-}
+//bool TebOptimalPlanner::plan(const std::vector<geometry_msgs::PoseStamped>& initial_plan, const fake_geometry_msgs::Twist* start_vel, bool free_goal_vel)
+//{
+////  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
+//  if (!teb_.isInit())
+//  {
+//    // init trajectory
+//    teb_.initTrajectoryToGoal(initial_plan, cfg_->robot.max_vel_x, cfg_->trajectory.global_plan_overwrite_orientation, cfg_->trajectory.min_samples, cfg_->trajectory.allow_init_with_backwards_motion);
+//  }
+//  else // warm start
+//  {
+//    PoseSE2 start_(initial_plan.front().pose);
+//    PoseSE2 goal_(initial_plan.back().pose);
+//    if (teb_.sizePoses()>0 && (goal_.position() - teb_.BackPose().position()).norm() < cfg_->trajectory.force_reinit_new_goal_dist) // actual warm start!
+//      teb_.updateAndPruneTEB(start_, goal_, cfg_->trajectory.min_samples); // update TEB
+//    else // goal too far away -> reinit
+//    {
+////      ROS_DEBUG("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
+//      teb_.clearTimedElasticBand();
+//      teb_.initTrajectoryToGoal(initial_plan, cfg_->robot.max_vel_x, true, cfg_->trajectory.min_samples, cfg_->trajectory.allow_init_with_backwards_motion);
+//    }
+//  }
+//  if (start_vel)
+//    setVelocityStart(*start_vel);
+//  if (free_goal_vel)
+//    setVelocityGoalFree();
+//  else
+//    vel_goal_.first = true; // we just reactivate and use the previously set velocity (should be zero if nothing was modified)
+//
+//  // now optimize
+//  return optimizeTEB(cfg_->optim.no_inner_iterations, cfg_->optim.no_outer_iterations);
+//}
 
 
-bool TebOptimalPlanner::plan(const tf::Pose& start, const tf::Pose& goal, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
+bool TebOptimalPlanner::plan(const tf::Pose& start, const tf::Pose& goal, const fake_geometry_msgs::Twist* start_vel, bool free_goal_vel)
 {
   PoseSE2 start_(start);
   PoseSE2 goal_(goal);
   return plan(start_, goal_, start_vel);
 }
 
-bool TebOptimalPlanner::plan(const PoseSE2& start, const PoseSE2& goal, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
+bool TebOptimalPlanner::plan(const PoseSE2& start, const PoseSE2& goal, const fake_geometry_msgs::Twist* start_vel, bool free_goal_vel)
 {	
-  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
+//  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
   if (!teb_.isInit())
   {
     // init trajectory
@@ -285,7 +285,7 @@ bool TebOptimalPlanner::plan(const PoseSE2& start, const PoseSE2& goal, const ge
       teb_.updateAndPruneTEB(start, goal, cfg_->trajectory.min_samples);
     else // goal too far away -> reinit
     {
-      ROS_DEBUG("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
+//      ROS_DEBUG("New goal: distance to existing goal is higher than the specified threshold. Reinitalizing trajectories.");
       teb_.clearTimedElasticBand();
       teb_.initTrajectoryToGoal(start, goal, 0, cfg_->robot.max_vel_x, cfg_->trajectory.min_samples, cfg_->trajectory.allow_init_with_backwards_motion);
     }
@@ -306,7 +306,7 @@ bool TebOptimalPlanner::buildGraph(double weight_multiplier)
 {
   if (!optimizer_->edges().empty() || !optimizer_->vertices().empty())
   {
-    ROS_WARN("Cannot build graph, because it is not empty. Call graphClear()!");
+//    ROS_WARN("Cannot build graph, because it is not empty. Call graphClear()!");
     return false;
   }
   
@@ -345,14 +345,14 @@ bool TebOptimalPlanner::optimizeGraph(int no_iterations,bool clear_after)
 {
   if (cfg_->robot.max_vel_x<0.01)
   {
-    ROS_WARN("optimizeGraph(): Robot Max Velocity is smaller than 0.01m/s. Optimizing aborted...");
+//    ROS_WARN("optimizeGraph(): Robot Max Velocity is smaller than 0.01m/s. Optimizing aborted...");
     if (clear_after) clearGraph();
     return false;	
   }
   
   if (!teb_.isInit() || teb_.sizePoses() < cfg_->trajectory.min_samples)
   {
-    ROS_WARN("optimizeGraph(): TEB is empty or has too less elements. Skipping optimization.");
+//    ROS_WARN("optimizeGraph(): TEB is empty or has too less elements. Skipping optimization.");
     if (clear_after) clearGraph();
     return false;	
   }
@@ -368,7 +368,7 @@ bool TebOptimalPlanner::optimizeGraph(int no_iterations,bool clear_after)
 
   if(!iter)
   {
-	ROS_ERROR("optimizeGraph(): Optimization failed! iter=%i", iter);
+//	ROS_ERROR("optimizeGraph(): Optimization failed! iter=%i", iter);
 	return false;
   }
 
@@ -390,7 +390,7 @@ void TebOptimalPlanner::clearGraph()
 void TebOptimalPlanner::AddTEBVertices()
 {
   // add vertices to graph
-  ROS_DEBUG_COND(cfg_->optim.optimization_verbose, "Adding TEB vertices ...");
+//  ROS_DEBUG_COND(cfg_->optim.optimization_verbose, "Adding TEB vertices ...");
   unsigned int id_counter = 0; // used for vertices ids
   for (int i=0; i<teb_.sizePoses(); ++i)
   {
@@ -692,7 +692,7 @@ void TebOptimalPlanner::AddEdgesViaPoints()
       }
       else
       {
-        ROS_DEBUG("TebOptimalPlanner::AddEdgesViaPoints(): skipping a via-point that is close or behind the current robot pose.");
+//        ROS_DEBUG("TebOptimalPlanner::AddEdgesViaPoints(): skipping a via-point that is close or behind the current robot pose.");
         continue; // skip via points really close or behind the current robot pose
       }
     }
@@ -943,7 +943,7 @@ void TebOptimalPlanner::AddEdgesPreferRotDir()
 
   if (prefer_rotdir_ != RotType::right && prefer_rotdir_ != RotType::left)
   {
-    ROS_WARN("TebOptimalPlanner::AddEdgesPreferRotDir(): unsupported RotType selected. Skipping edge creation.");
+//    ROS_WARN("TebOptimalPlanner::AddEdgesPreferRotDir(): unsupported RotType selected. Skipping edge creation.");
     return;
   }
 
@@ -1111,7 +1111,7 @@ bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega
 {
   if (teb_.sizePoses()<2)
   {
-    ROS_ERROR("TebOptimalPlanner::getVelocityCommand(): The trajectory contains less than 2 poses. Make sure to init and optimize/plan the trajectory fist.");
+//    ROS_ERROR("TebOptimalPlanner::getVelocityCommand(): The trajectory contains less than 2 poses. Make sure to init and optimize/plan the trajectory fist.");
     vx = 0;
     vy = 0;
     omega = 0;
@@ -1121,7 +1121,7 @@ bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega
   double dt = teb_.TimeDiff(0);
   if (dt<=0)
   {	
-    ROS_ERROR("TebOptimalPlanner::getVelocityCommand() - timediff<=0 is invalid!");
+//    ROS_ERROR("TebOptimalPlanner::getVelocityCommand() - timediff<=0 is invalid!");
     vx = 0;
     vy = 0;
     omega = 0;
@@ -1133,7 +1133,7 @@ bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega
   return true;
 }
 
-void TebOptimalPlanner::getVelocityProfile(std::vector<geometry_msgs::Twist>& velocity_profile) const
+void TebOptimalPlanner::getVelocityProfile(std::vector<fake_geometry_msgs::Twist>& velocity_profile) const
 {
   int n = teb_.sizePoses();
   velocity_profile.resize( n+1 );
@@ -1160,86 +1160,86 @@ void TebOptimalPlanner::getVelocityProfile(std::vector<geometry_msgs::Twist>& ve
   velocity_profile.back().angular.z = vel_goal_.second.angular.z;
 }
 
-void TebOptimalPlanner::getFullTrajectory(std::vector<TrajectoryPointMsg>& trajectory) const
-{
-  int n = teb_.sizePoses();
-  
-  trajectory.resize(n);
-  
-  if (n == 0)
-    return;
-     
-  double curr_time = 0;
-  
-  // start
-  TrajectoryPointMsg& start = trajectory.front();
-  teb_.Pose(0).toPoseMsg(start.pose);
-  start.velocity.linear.z = 0;
-  start.velocity.angular.x = start.velocity.angular.y = 0;
-  start.velocity.linear.x = vel_start_.second.linear.x;
-  start.velocity.linear.y = vel_start_.second.linear.y;
-  start.velocity.angular.z = vel_start_.second.angular.z;
-  start.time_from_start.fromSec(curr_time);
-  
-  curr_time += teb_.TimeDiff(0);
-  
-  // intermediate points
-  for (int i=1; i < n-1; ++i)
-  {
-    TrajectoryPointMsg& point = trajectory[i];
-    teb_.Pose(i).toPoseMsg(point.pose);
-    point.velocity.linear.z = 0;
-    point.velocity.angular.x = point.velocity.angular.y = 0;
-    double vel1_x, vel1_y, vel2_x, vel2_y, omega1, omega2;
-    extractVelocity(teb_.Pose(i-1), teb_.Pose(i), teb_.TimeDiff(i-1), vel1_x, vel1_y, omega1);
-    extractVelocity(teb_.Pose(i), teb_.Pose(i+1), teb_.TimeDiff(i), vel2_x, vel2_y, omega2);
-    point.velocity.linear.x = 0.5*(vel1_x+vel2_x);
-    point.velocity.linear.y = 0.5*(vel1_y+vel2_y);
-    point.velocity.angular.z = 0.5*(omega1+omega2);    
-    point.time_from_start.fromSec(curr_time);
-    
-    curr_time += teb_.TimeDiff(i);
-  }
-  
-  // goal
-  TrajectoryPointMsg& goal = trajectory.back();
-  teb_.BackPose().toPoseMsg(goal.pose);
-  goal.velocity.linear.z = 0;
-  goal.velocity.angular.x = goal.velocity.angular.y = 0;
-  goal.velocity.linear.x = vel_goal_.second.linear.x;
-  goal.velocity.linear.y = vel_goal_.second.linear.y;
-  goal.velocity.angular.z = vel_goal_.second.angular.z;
-  goal.time_from_start.fromSec(curr_time);
-}
+//void TebOptimalPlanner::getFullTrajectory(std::vector<TrajectoryPointMsg>& trajectory) const
+//{
+//  int n = teb_.sizePoses();
+//
+//  trajectory.resize(n);
+//
+//  if (n == 0)
+//    return;
+//
+//  double curr_time = 0;
+//
+//  // start
+//  TrajectoryPointMsg& start = trajectory.front();
+//  teb_.Pose(0).toPoseMsg(start.pose);
+//  start.velocity.linear.z = 0;
+//  start.velocity.angular.x = start.velocity.angular.y = 0;
+//  start.velocity.linear.x = vel_start_.second.linear.x;
+//  start.velocity.linear.y = vel_start_.second.linear.y;
+//  start.velocity.angular.z = vel_start_.second.angular.z;
+//  start.time_from_start.fromSec(curr_time);
+//
+//  curr_time += teb_.TimeDiff(0);
+//
+//  // intermediate points
+//  for (int i=1; i < n-1; ++i)
+//  {
+//    TrajectoryPointMsg& point = trajectory[i];
+//    teb_.Pose(i).toPoseMsg(point.pose);
+//    point.velocity.linear.z = 0;
+//    point.velocity.angular.x = point.velocity.angular.y = 0;
+//    double vel1_x, vel1_y, vel2_x, vel2_y, omega1, omega2;
+//    extractVelocity(teb_.Pose(i-1), teb_.Pose(i), teb_.TimeDiff(i-1), vel1_x, vel1_y, omega1);
+//    extractVelocity(teb_.Pose(i), teb_.Pose(i+1), teb_.TimeDiff(i), vel2_x, vel2_y, omega2);
+//    point.velocity.linear.x = 0.5*(vel1_x+vel2_x);
+//    point.velocity.linear.y = 0.5*(vel1_y+vel2_y);
+//    point.velocity.angular.z = 0.5*(omega1+omega2);
+//    point.time_from_start.fromSec(curr_time);
+//
+//    curr_time += teb_.TimeDiff(i);
+//  }
+//
+//  // goal
+//  TrajectoryPointMsg& goal = trajectory.back();
+//  teb_.BackPose().toPoseMsg(goal.pose);
+//  goal.velocity.linear.z = 0;
+//  goal.velocity.angular.x = goal.velocity.angular.y = 0;
+//  goal.velocity.linear.x = vel_goal_.second.linear.x;
+//  goal.velocity.linear.y = vel_goal_.second.linear.y;
+//  goal.velocity.angular.z = vel_goal_.second.angular.z;
+//  goal.time_from_start.fromSec(curr_time);
+//}
 
 
-bool TebOptimalPlanner::isTrajectoryFeasible(base_local_planner::CostmapModel* costmap_model, const std::vector<geometry_msgs::Point>& footprint_spec,
-                                             double inscribed_radius, double circumscribed_radius, int look_ahead_idx)
-{
-  if (look_ahead_idx < 0 || look_ahead_idx >= teb().sizePoses())
-    look_ahead_idx = teb().sizePoses() - 1;
-  
-  for (int i=0; i <= look_ahead_idx; ++i)
-  {           
-    if ( costmap_model->footprintCost(teb().Pose(i).x(), teb().Pose(i).y(), teb().Pose(i).theta(), footprint_spec, inscribed_radius, circumscribed_radius) < 0 )
-      return false;
-    
-    // check if distance between two poses is higher than the robot radius and interpolate in that case
-    // (if obstacles are pushing two consecutive poses away, the center between two consecutive poses might coincide with the obstacle ;-)!
-    if (i<look_ahead_idx)
-    {
-      if ( (teb().Pose(i+1).position()-teb().Pose(i).position()).norm() > inscribed_radius)
-      {
-        // check one more time
-        PoseSE2 center = PoseSE2::average(teb().Pose(i), teb().Pose(i+1));
-        if ( costmap_model->footprintCost(center.x(), center.y(), center.theta(), footprint_spec, inscribed_radius, circumscribed_radius) < 0 )
-          return false;
-      }
-      
-    }
-  }
-  return true;
-}
+//bool TebOptimalPlanner::isTrajectoryFeasible(base_local_planner::CostmapModel* costmap_model, const std::vector<geometry_msgs::Point>& footprint_spec,
+//                                             double inscribed_radius, double circumscribed_radius, int look_ahead_idx)
+//{
+//  if (look_ahead_idx < 0 || look_ahead_idx >= teb().sizePoses())
+//    look_ahead_idx = teb().sizePoses() - 1;
+//
+//  for (int i=0; i <= look_ahead_idx; ++i)
+//  {
+//    if ( costmap_model->footprintCost(teb().Pose(i).x(), teb().Pose(i).y(), teb().Pose(i).theta(), footprint_spec, inscribed_radius, circumscribed_radius) < 0 )
+//      return false;
+//
+//    // check if distance between two poses is higher than the robot radius and interpolate in that case
+//    // (if obstacles are pushing two consecutive poses away, the center between two consecutive poses might coincide with the obstacle ;-)!
+//    if (i<look_ahead_idx)
+//    {
+//      if ( (teb().Pose(i+1).position()-teb().Pose(i).position()).norm() > inscribed_radius)
+//      {
+//        // check one more time
+//        PoseSE2 center = PoseSE2::average(teb().Pose(i), teb().Pose(i+1));
+//        if ( costmap_model->footprintCost(center.x(), center.y(), center.theta(), footprint_spec, inscribed_radius, circumscribed_radius) < 0 )
+//          return false;
+//      }
+//
+//    }
+//  }
+//  return true;
+//}
 
 
 bool TebOptimalPlanner::isHorizonReductionAppropriate(const std::vector<geometry_msgs::PoseStamped>& initial_plan) const
@@ -1265,14 +1265,14 @@ bool TebOptimalPlanner::isHorizonReductionAppropriate(const std::vector<geometry
   // push the trajectory to the correct side.
   if ( std::abs( g2o::normalize_theta( teb_.Pose(0).theta() - teb_.BackPose().theta() ) ) > M_PI/2)
   {
-    ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Goal orientation - start orientation > 90° ");
+//    ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Goal orientation - start orientation > 90° ");
     return true;
   }
   
   // check if goal heading deviates more than 90° w.r.t. start orienation
   if (teb_.Pose(0).orientationUnitVec().dot(teb_.BackPose().position() - teb_.Pose(0).position()) < 0)
   {
-    ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Goal heading - start orientation > 90° ");
+//    ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Goal heading - start orientation > 90° ");
     return true;
   }
     
@@ -1298,14 +1298,14 @@ bool TebOptimalPlanner::isHorizonReductionAppropriate(const std::vector<geometry
     double dist = (teb_.Pose(i).position() - teb_.Pose(i-1).position()).norm();
     if (dist > 0.95*cfg_->obstacles.min_obstacle_dist)
     {
-      ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Distance between consecutive poses > 0.9*min_obstacle_dist");
+//      ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Distance between consecutive poses > 0.9*min_obstacle_dist");
       return true;
     }
     ref_path_length += dist;
   }
   if (ref_path_length>0 && teb_length/ref_path_length < 0.7) // now check ratio
   {
-    ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Planned trajectory is at least 30° shorter than the initial plan");
+//    ROS_DEBUG("TebOptimalPlanner::isHorizonReductionAppropriate(): Planned trajectory is at least 30° shorter than the initial plan");
     return true;
   }
   

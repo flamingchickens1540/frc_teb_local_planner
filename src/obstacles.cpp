@@ -59,7 +59,7 @@ void PolygonObstacle::calcCentroid()
   if (vertices_.empty())
   {
     centroid_.setConstant(NAN);
-    ROS_WARN("PolygonObstacle::calcCentroid(): number of vertices is empty. the resulting centroid is a vector of NANs.");
+    //ROS_WARN("PolygonObstacle::calcCentroid(): number of vertices is empty. the resulting centroid is a vector of NANs.");
     return;
   }
   
@@ -170,7 +170,7 @@ Eigen::Vector2d PolygonObstacle::getClosestPoint(const Eigen::Vector2d& position
     }
   }
 
-  ROS_ERROR("PolygonObstacle::getClosestPoint() cannot find any closest point. Polygon ill-defined?");
+  //ROS_ERROR("PolygonObstacle::getClosestPoint() cannot find any closest point. Polygon ill-defined?");
   return Eigen::Vector2d::Zero(); // todo: maybe boost::optional?
 }
 

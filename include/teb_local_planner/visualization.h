@@ -91,7 +91,7 @@ public:
    * @param nh local ros::NodeHandle
    * @param cfg const reference to the TebConfig class for parameters
    */
-  TebVisualization(ros::NodeHandle& nh, const TebConfig& cfg);
+//  TebVisualization(ros::NodeHandle& nh, const TebConfig& cfg);
   
   /**
    * @brief Initializes the class and registers topics.
@@ -100,7 +100,7 @@ public:
    * @param nh local ros::NodeHandle
    * @param cfg const reference to the TebConfig class for parameters
    */
-  void initialize(ros::NodeHandle& nh, const TebConfig& cfg);
+//  void initialize(ros::NodeHandle& nh, const TebConfig& cfg);
   
   
   /** @name Publish to topics */
@@ -229,11 +229,11 @@ protected:
    */
   bool printErrorWhenNotInitialized() const;
 
-  ros::Publisher global_plan_pub_; //!< Publisher for the global plan
-  ros::Publisher local_plan_pub_; //!< Publisher for the local plan
-  ros::Publisher teb_poses_pub_; //!< Publisher for the trajectory pose sequence
-  ros::Publisher teb_marker_pub_; //!< Publisher for visualization markers
-  ros::Publisher feedback_pub_; //!< Publisher for the feedback message for analysis and debug purposes
+//  ros::Publisher global_plan_pub_; //!< Publisher for the global plan
+//  ros::Publisher local_plan_pub_; //!< Publisher for the local plan
+//  ros::Publisher teb_poses_pub_; //!< Publisher for the trajectory pose sequence
+//  ros::Publisher teb_marker_pub_; //!< Publisher for visualization markers
+//  ros::Publisher feedback_pub_; //!< Publisher for the feedback message for analysis and debug purposes
   
   const TebConfig* cfg_; //!< Config class that stores and manages all related parameters
   
