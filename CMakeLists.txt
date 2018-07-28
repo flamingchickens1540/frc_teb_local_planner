@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(jnitests)
+project(jni_teb_local_planner)
 
 # Set to Release in order to speed up the program significantly
 set(CMAKE_BUILD_TYPE Release) #None, Debug, Release, RelWithDebInfo, MinSizeRel
@@ -59,7 +59,7 @@ set(SOURCE_FILES teb_jni_interface.cpp src/timed_elastic_band.cpp
 #        src/teb_local_planner_ros.cpp
 #        src/graph_search.cpp
         )
-add_library(jnitests SHARED ${SOURCE_FILES})
+add_library(jni_teb_local_planner SHARED ${SOURCE_FILES})
 
 
 include_directories(${JNI_INCLUDE_DIRS})
@@ -72,7 +72,7 @@ include_directories(/usr/include/suitesparse/)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
-TARGET_LINK_LIBRARIES( jnitests LINK_PUBLIC ${Boost_LIBRARIES} )
-TARGET_LINK_LIBRARIES( jnitests LINK_PUBLIC ${G2O_LIBRARIES} )
-TARGET_LINK_LIBRARIES( jnitests LINK_PUBLIC ${SUITESPARSE_LIBRARIES} )
+TARGET_LINK_LIBRARIES( jni_teb_local_planner LINK_PUBLIC ${Boost_LIBRARIES} )
+TARGET_LINK_LIBRARIES( jni_teb_local_planner LINK_PUBLIC ${G2O_LIBRARIES} )
+TARGET_LINK_LIBRARIES( jni_teb_local_planner LINK_PUBLIC ${SUITESPARSE_LIBRARIES} )
 

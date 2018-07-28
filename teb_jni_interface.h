@@ -2,10 +2,10 @@
 // Created by alex on 2/22/17.
 //
 
-#ifndef JNITESTS_UTILITIES_H
-#define JNITESTS_UTILITIES_H
+#ifndef JNI_TEB_LOCAL_PLANNER_UTILITIES_H
+#define JNI_TEB_LOCAL_PLANNER_UTILITIES_H
 
 #include <iostream>
 #include <complex>
 
-#endif //JNITESTS_UTILITIES_H
+#endif //JNI_TEB_LOCAL_PLANNER_UTILITIES_H

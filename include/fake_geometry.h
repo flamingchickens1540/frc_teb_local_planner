@@ -2,8 +2,8 @@
 // Created by wangl on 7/28/2018.
 //
 
-#ifndef JNITESTS_FAKEGEOMETRY_H
-#define JNITESTS_FAKEGEOMETRY_H
+#ifndef JNI_TEB_LOCAL_PLANNER_FAKEGEOMETRY_H
+#define JNI_TEB_LOCAL_PLANNER_FAKEGEOMETRY_H
 
 namespace fake_geometry_msgs {
     struct Vector3 {
@@ -18,4 +18,4 @@ namespace fake_geometry_msgs {
     };
 }
 
-#endif //JNITESTS_FAKEGEOMETRY_H
+#endif //JNI_TEB_LOCAL_PLANNER_FAKEGEOMETRY_H
