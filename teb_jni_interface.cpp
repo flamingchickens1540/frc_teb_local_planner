@@ -27,7 +27,7 @@ Java_TebInterface_plan(JNIEnv *env, jclass, jobject jstart, jobject jgoal, jobje
     std::cout << "Start Vel: " << start_vel_pose << std::endl;
     std::cout << "Free Goal Vel: " << (static_cast<bool>(free_goal_vel) ? "True" : "False") << std::endl;
 
-    fake_geometry_msgs::Twist start_vel;
+    fake_geometry_msgs::Twist start_vel{};
     start_vel.linear.x = start_vel_pose.x();
     start_vel.linear.y = start_vel_pose.y();
     start_vel.angular.z = start_vel_pose.theta();
