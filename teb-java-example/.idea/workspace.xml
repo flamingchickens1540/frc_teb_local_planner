@@ -2,9 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="873aa47c-13fb-4bda-bdea-716c5f013382" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/TebInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/headers/TebInterface.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/TebInterface.h" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/RobotFootprint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../launch/test_optim_node.launch" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../package.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/headers/TebInterface.h" beforeDir="false" afterPath="$PROJECT_DIR$/headers/TebInterface.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/teb-java-example/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/teb-java-example/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/teb-java-example/PoseSE2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/teb-java-example/PoseSE2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/teb-java-example/TebInterface.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/teb-java-example/TebInterface.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/TebInterface.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/TebInterface.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../teb_jni_interface.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/../teb_jni_interface.cpp" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,62 +26,81 @@
       <usages-collector id="statistics.lifecycle.project">
         <counts>
           <entry key="project.closed" value="1" />
+          <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.5" value="1" />
-          <entry key="project.opened" value="1" />
+          <entry key="project.opened" value="2" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="class" value="1" />
-          <entry key="h" value="2" />
-          <entry key="java" value="2" />
+          <entry key="class" value="6" />
+          <entry key="h" value="3" />
+          <entry key="java" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="C++" value="2" />
-          <entry key="CLASS" value="1" />
-          <entry key="JAVA" value="2" />
+          <entry key="C++" value="3" />
+          <entry key="CLASS" value="6" />
+          <entry key="JAVA" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="java" value="35" />
+          <entry key="java" value="104" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="35" />
+          <entry key="JAVA" value="104" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file pinned="false" current-in-tab="false">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" selection-start-line="3" selection-end-line="4" selection-end-column="36" />
+            <state relative-caret-position="160">
+              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/TebInterface.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="6" column="50" lean-forward="true" selection-start-line="6" selection-start-column="50" selection-end-line="6" selection-end-column="50" />
+            <state relative-caret-position="220">
+              <caret line="11" column="60" selection-start-line="11" selection-start-column="60" selection-end-line="11" selection-end-column="60" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/RobotFootprint.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="20">
+              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/headers/TebInterface.h">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-60" />
+          </provider>
         </entry>
       </file>
     </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -88,8 +116,9 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/Main.java" />
         <option value="$PROJECT_DIR$/src/TebInterface.java" />
+        <option value="$PROJECT_DIR$/src/RobotFootprint.java" />
+        <option value="$PROJECT_DIR$/src/Main.java" />
       </list>
     </option>
   </component>
@@ -108,12 +137,10 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator proportions="" version="1">
+      <autoscrollFromSource ProjectPane="true" />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView" />
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -130,11 +157,6 @@
               <item name="teb-java-example" type="b2602c69:ProjectViewProjectNode" />
               <item name="teb-java-example" type="462c0819:PsiDirectoryNode" />
               <item name=".idea" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="teb-java-example" type="b2602c69:ProjectViewProjectNode" />
-              <item name="teb-java-example" type="462c0819:PsiDirectoryNode" />
-              <item name="headers" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="teb-java-example" type="b2602c69:ProjectViewProjectNode" />
@@ -158,6 +180,9 @@
           <select />
         </subPane>
       </pane>
+      <pane id="AndroidView" />
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -173,6 +198,9 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
+    <key name="CreateClassDialog.RecentsKey">
+      <recent name="" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\wangl\CloudStation\Liam\ROS\jni_teb_local_planner\teb-java-example\headers" />
     </key>
@@ -266,17 +294,18 @@
       <option name="presentableId" value="Default" />
       <updated>1532807377761</updated>
       <workItem from="1532807382165" duration="939000" />
+      <workItem from="1532817442388" duration="2475000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="939000" />
+    <option name="totallyTimeSpent" value="3414000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="-6" width="1293" height="733" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" x="1672" y="304" width="689" height="1558" id="Project" order="0" sideWeight="0.4878049" visible="true" weight="0.21862349" />
+      <window_info content_ui="combo" x="1672" y="304" width="689" height="1558" id="Project" order="0" sideWeight="0.4878049" visible="true" weight="0.22267206" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.249375" />
       <window_info id="Capture Tool" order="2" />
       <window_info id="Designer" order="3" />
@@ -285,10 +314,9 @@
       <window_info id="Captures" order="6" weight="0.32972974" />
       <window_info id="Favorites" order="7" sideWeight="0.5121951" side_tool="true" weight="0.2684375" />
       <window_info id="Image Layers" order="8" />
-      <window_info anchor="bottom" id="Database Changes" show_stripe_button="false" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3269461" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49773315" weight="0.3604651" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49773315" visible="true" weight="0.3604651" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -299,6 +327,7 @@
       <window_info anchor="bottom" id="Messages" order="10" sideWeight="0.49783784" weight="0.32890365" />
       <window_info anchor="bottom" id="Terminal" order="11" weight="0.3275449" />
       <window_info anchor="bottom" id="Version Control" order="12" sideWeight="0.4978125" weight="0.31322208" />
+      <window_info anchor="bottom" id="Database Changes" order="13" show_stripe_button="false" />
       <window_info anchor="right" id="Coverage" order="0" side_tool="true" />
       <window_info anchor="right" id="Commander" order="1" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="2" weight="0.24967617" />
@@ -324,36 +353,44 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/TebInterface.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="10" column="26" lean-forward="true" selection-start-line="10" selection-start-column="26" selection-end-line="10" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/out/production/teb-java-example/Main.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#192#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/TebInterface.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" selection-start-line="3" selection-end-line="4" selection-end-column="36" />
+        <state relative-caret-position="220">
+          <caret line="11" column="60" selection-start-line="11" selection-start-column="60" selection-end-line="11" selection-end-column="60" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/headers/TebInterface.h">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/TebInterface.java">
+    <entry file="file://$PROJECT_DIR$/src/RobotFootprint.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="6" column="50" lean-forward="true" selection-start-line="6" selection-start-column="50" selection-end-line="6" selection-end-column="50" />
+        <state relative-caret-position="20">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/TebInterface.class">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/RobotFootprint.class">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/PoseSE2.class">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/headers/TebInterface.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-60" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>
