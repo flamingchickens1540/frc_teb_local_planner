@@ -9,6 +9,14 @@ extern "C" {
 #endif
 /*
  * Class:     TebInterface
+ * Method:    initialize
+ * Signature: (LRobotFootprint;)V
+ */
+JNIEXPORT void JNICALL Java_TebInterface_initialize
+  (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     TebInterface
  * Method:    plan
  * Signature: (LPoseSE2;LPoseSE2;LPoseSE2;Z)LPoseSE2;
  */

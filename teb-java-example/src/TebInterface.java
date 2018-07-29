@@ -8,5 +8,6 @@ class TebInterface {
         System.load(lib.getAbsolutePath());
     }
 
+    public static native void initialize(RobotFootprint footprint);
     public static native PoseSE2 plan(PoseSE2 start, PoseSE2 goal, PoseSE2 start_vel, boolean free_goal_vel);
 }
