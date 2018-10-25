@@ -8,3 +8,4 @@ Makefile
 *.cbp
 *.log
 *.class
+**/out
