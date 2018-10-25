@@ -3,6 +3,10 @@ project(jni_teb_local_planner)
 
 #set(CMAKE_SYSTEM_NAME Linux)
 #set(CMAKE_SYSTEM_PROCESSOR arm)
+#-D
+#CMAKE_C_COMPILER=/usr/bin/arm-frc-linux-gnueabi-gcc
+#-D
+#CMAKE_CXX_COMPILER=/usr/bin/arm-frc-linux-gnueabi-g++
 
 #set(tools /home/devel/gcc-4.7-linaro-rpi-gnueabihf)
 #set(CMAKE_C_COMPILER /usr/bin/arm-frc-linux-gnueabi-gcc)
