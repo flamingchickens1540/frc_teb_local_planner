@@ -17,6 +17,14 @@ JNIEXPORT void JNICALL Java_TebInterface_initialize
 
 /*
  * Class:     TebInterface
+ * Method:    updateConfig
+ * Signature: (LTebConfig;)V
+ */
+JNIEXPORT void JNICALL Java_TebInterface_updateConfig
+  (JNIEnv *, jclass, jobject);
+
+/*
+ * Class:     TebInterface
  * Method:    plan
  * Signature: (LPoseSE2;LPoseSE2;LPoseSE2;Z)LPoseSE2;
  */
