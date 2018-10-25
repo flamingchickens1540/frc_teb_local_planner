@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(jni_teb_local_planner)
 
+#set(CMAKE_SYSTEM_NAME Linux)
+#set(CMAKE_SYSTEM_PROCESSOR arm)
+
+#set(tools /home/devel/gcc-4.7-linaro-rpi-gnueabihf)
+#set(CMAKE_C_COMPILER /usr/bin/arm-frc-linux-gnueabi-gcc)
+#set(CMAKE_CXX_COMPILER /usr/bin/arm-frc-linux-gnueabi-g++)
+#
+#set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+#set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+#set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+#set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)
+
 # Set to Release in order to speed up the program significantly
 set(CMAKE_BUILD_TYPE Release) #None, Debug, Release, RelWithDebInfo, MinSizeRel
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
