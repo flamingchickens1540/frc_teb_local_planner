@@ -16,10 +16,12 @@ IF(UNIX)
     #  SET(G2O_FIND_QUIETLY TRUE)
     #ENDIF(G2O_INCLUDE_DIR AND G2O_LIBRARIES)
 
+  SET(CMAKE_PREFIX_PATH "/opt/ros/kinetic")
+
   MESSAGE(STATUS "Searching for g2o ...")
   FIND_PATH(G2O_INCLUDE_DIR
     NAMES core math_groups types
-    PATHS /usr/local /usr
+    PATHS /usr/local /usr ${CMAKE_PREFIX_PATH}
     PATH_SUFFIXES include/g2o include)
 
   IF (G2O_INCLUDE_DIR)
