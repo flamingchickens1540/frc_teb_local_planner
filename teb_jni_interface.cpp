@@ -40,27 +40,44 @@ void saturateVelocity(double &vx, double &vy, double &omega, double max_vel_x, d
         vx = -max_vel_x_backwards;
 }
 
-teb_local_planner::PlannerInterfacePtr planner_;
-teb_local_planner::TebConfig cfg_;
-teb_local_planner::TebVisualizationPtr visual_;
+static teb_local_planner::PlannerInterfacePtr planner_;
+static teb_local_planner::TebConfig cfg_;
+static teb_local_planner::TebVisualizationPtr visual_;
+static teb_local_planner::ObstContainer obstacles_{};
+static teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_shared<teb_local_planner::PointRobotFootprint>();
+static teb_local_planner::ViaPointContainer via_points_{};
 
 JNIEXPORT void JNICALL Java_TebInterface_initialize(JNIEnv *, jclass, jobject) {
-    teb_local_planner::ObstContainer obstacles_{};
-    teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_shared<teb_local_planner::PointRobotFootprint>();
-    teb_local_planner::ViaPointContainer via_points_{};
 
     planner_ = teb_local_planner::PlannerInterfacePtr(new teb_local_planner::TebOptimalPlanner(cfg_, &obstacles_, robot_model, visual_, &via_points_));
+}
+
+JNIEXPORT void JNICALL Java_TebInterface_updateConfig(JNIEnv *env, jclass, jobject jconf) {
+    jclass TebConfigCLass = env->GetObjectClass(jconf);
+
+    cfg_.robot.max_vel_x = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_x", "D"));
+    cfg_.robot.max_vel_x_backwards = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_x_backwards", "D"));
+    cfg_.robot.max_vel_y = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_y", "D"));
+    cfg_.robot.max_vel_theta = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_theta", "D"));
+    cfg_.robot.acc_lim_x = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_x", "D"));
+    cfg_.robot.acc_lim_y = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_y", "D"));
+    cfg_.robot.acc_lim_theta = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_theta", "D"));
+    cfg_.robot.min_turning_radius = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "min_turning_radius", "D"));
+    cfg_.robot.wheelbase = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "wheelbase", "D"));
+
+    cfg_.goal_tolerance.yaw_goal_tolerance = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "yaw_goal_tolerance", "D"));
+    cfg_.goal_tolerance.xy_goal_tolerance = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "xy_goal_tolerance", "D"));
 }
 
 JNIEXPORT jobject JNICALL
 Java_TebInterface_plan(JNIEnv *env, jclass, jobject jstart, jobject jgoal, jobject jstart_vel, jboolean free_goal_vel) {
     auto start = poseSE2FromJobject(env, jstart);
-    std::cout << "Start Pose: " << start << std::endl;
+//    std::cout << "Start Pose: " << start << std::endl;
     auto goal = poseSE2FromJobject(env, jgoal);
-    std::cout << "End Pose: " << goal << std::endl;
+//    std::cout << "End Pose: " << goal << std::endl;
     auto start_vel_pose = poseSE2FromJobject(env, jstart_vel);
-    std::cout << "Start Vel: " << start_vel_pose << std::endl;
-    std::cout << "Free Goal Vel: " << (static_cast<bool>(free_goal_vel) ? "True" : "False") << std::endl;
+//    std::cout << "Start Vel: " << start_vel_pose << std::endl;
+//    std::cout << "Free Goal Vel: " << (static_cast<bool>(free_goal_vel) ? "True" : "False") << std::endl;
 
     fake_geometry_msgs::Twist start_vel{};
     start_vel.linear.x = start_vel_pose.x();
@@ -68,19 +85,19 @@ Java_TebInterface_plan(JNIEnv *env, jclass, jobject jstart, jobject jgoal, jobje
     start_vel.angular.z = start_vel_pose.theta();
 
     bool success = planner_->plan(start, goal, &start_vel, free_goal_vel);
-//    if (!success) {
-//        planner_->clearPlanner(); // force reinitialization for next time
-//        std::cout << "teb_local_planner was not able to obtain a local plan for the current setting." << std::endl;
-//    }
+    if (!success) {
+        planner_->clearPlanner(); // force reinitialization for next time
+        std::cout << "teb_local_planner was not able to obtain a local plan for the current setting." << std::endl;
+    }
 
     double x,y,theta;
     planner_->getVelocityCommand(x, y, theta);
 
-//    saturateVelocity(x, y, theta,
-//            cfg_.robot.max_vel_x,
-//            cfg_.robot.max_vel_y,
-//            cfg_.robot.max_vel_theta,
-//            cfg_.robot.max_vel_x_backwards);
+    saturateVelocity(x, y, theta,
+            cfg_.robot.max_vel_x,
+            cfg_.robot.max_vel_y,
+            cfg_.robot.max_vel_theta,
+            cfg_.robot.max_vel_x_backwards);
 
     jclass poseSE2Class = env->FindClass("LPoseSE2;");
     jmethodID poseSE2Constructor = env->GetMethodID(poseSE2Class, "<init>", "(DDD)V");
