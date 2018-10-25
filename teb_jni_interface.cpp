@@ -5,6 +5,7 @@
 #include "teb_jni_interface.h"
 #include "include/teb_local_planner/pose_se2.h"
 #include "teb-java-example/headers/TebInterface.h"
+#include <chrono>  // for high_resolution_clock
 
 teb_local_planner::PoseSE2 poseSE2FromJobject(JNIEnv *env, const jobject &obj) {
     jclass PoseSE2Class = env->GetObjectClass(obj);
@@ -55,43 +56,50 @@ JNIEXPORT void JNICALL Java_TebInterface_initialize(JNIEnv *, jclass, jobject) {
 JNIEXPORT void JNICALL Java_TebInterface_updateConfig(JNIEnv *env, jclass, jobject jconf) {
     jclass TebConfigCLass = env->GetObjectClass(jconf);
 
-    cfg_.robot.max_vel_x = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_x", "D"));
-    cfg_.robot.max_vel_x_backwards = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_x_backwards", "D"));
-    cfg_.robot.max_vel_y = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_y", "D"));
-    cfg_.robot.max_vel_theta = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_theta", "D"));
-    cfg_.robot.acc_lim_x = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_x", "D"));
-    cfg_.robot.acc_lim_y = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_y", "D"));
-    cfg_.robot.acc_lim_theta = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_theta", "D"));
-    cfg_.robot.min_turning_radius = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "min_turning_radius", "D"));
-    cfg_.robot.wheelbase = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "wheelbase", "D"));
+    cfg_.robot.max_vel_x =              env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_x", "D"));
+    cfg_.robot.max_vel_x_backwards =    env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_x_backwards", "D"));
+    cfg_.robot.max_vel_y =              env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_y", "D"));
+    cfg_.robot.max_vel_theta =          env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "max_vel_theta", "D"));
 
-    cfg_.goal_tolerance.yaw_goal_tolerance = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "yaw_goal_tolerance", "D"));
-    cfg_.goal_tolerance.xy_goal_tolerance = env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "xy_goal_tolerance", "D"));
+    cfg_.robot.acc_lim_x =              env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_x", "D"));
+    cfg_.robot.acc_lim_y =              env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_y", "D"));
+    cfg_.robot.acc_lim_theta =          env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "acc_lim_theta", "D"));
+
+    cfg_.robot.min_turning_radius =     env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "min_turning_radius", "D"));
+    cfg_.robot.wheelbase =              env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "wheelbase", "D"));
+
+    cfg_.goal_tolerance.yaw_goal_tolerance =    env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "yaw_goal_tolerance", "D"));
+    cfg_.goal_tolerance.xy_goal_tolerance =     env->GetDoubleField(jconf, env->GetFieldID(TebConfigCLass, "xy_goal_tolerance", "D"));
 }
 
 JNIEXPORT jobject JNICALL
 Java_TebInterface_plan(JNIEnv *env, jclass, jobject jstart, jobject jgoal, jobject jstart_vel, jboolean free_goal_vel) {
-    auto start = poseSE2FromJobject(env, jstart);
-//    std::cout << "Start Pose: " << start << std::endl;
-    auto goal = poseSE2FromJobject(env, jgoal);
-//    std::cout << "End Pose: " << goal << std::endl;
-    auto start_vel_pose = poseSE2FromJobject(env, jstart_vel);
-//    std::cout << "Start Vel: " << start_vel_pose << std::endl;
-//    std::cout << "Free Goal Vel: " << (static_cast<bool>(free_goal_vel) ? "True" : "False") << std::endl;
+    auto startPose = poseSE2FromJobject(env, jstart);
+    auto goalPose = poseSE2FromJobject(env, jgoal);
+    auto startTwist = poseSE2FromJobject(env, jstart_vel);
 
     fake_geometry_msgs::Twist start_vel{};
-    start_vel.linear.x = start_vel_pose.x();
-    start_vel.linear.y = start_vel_pose.y();
-    start_vel.angular.z = start_vel_pose.theta();
+    start_vel.linear.x = startTwist.x();
+    start_vel.linear.y = startTwist.y();
+    start_vel.angular.z = startTwist.theta();
 
-    bool success = planner_->plan(start, goal, &start_vel, free_goal_vel);
+
+    auto start = std::chrono::high_resolution_clock::now();
+    bool success = planner_->plan(startPose, goalPose, &start_vel, free_goal_vel); // Calculate the plan
     if (!success) {
         planner_->clearPlanner(); // force reinitialization for next time
         std::cout << "teb_local_planner was not able to obtain a local plan for the current setting." << std::endl;
     }
 
+    // Debugging
+//    std::cout << "Start Pose: " << startPose << std::endl;
+//    std::cout << "End Pose: " << goalPose << std::endl;
+//    std::cout << "Start Vel: " << startTwist << std::endl;
+//    std::cout << "Free Goal Vel: " << (static_cast<bool>(free_goal_vel) ? "True" : "False") << std::endl;
+
     double x,y,theta;
     planner_->getVelocityCommand(x, y, theta);
+    auto finish = std::chrono::high_resolution_clock::now();
 
     saturateVelocity(x, y, theta,
             cfg_.robot.max_vel_x,
