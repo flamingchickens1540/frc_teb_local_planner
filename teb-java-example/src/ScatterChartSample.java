@@ -1,5 +1,3 @@
-import java.util.Timer;
-import java.util.TimerTask;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -52,28 +50,49 @@ public class ScatterChartSample extends Application {
     }
 
     public static void main(String[] args) {
-        conf.max_vel_x = 1;
-        conf.max_vel_x_backwards = 1;
-        conf.xy_goal_tolerance = 0.05;
-        conf.yaw_goal_tolerance = 0.05;
         TebInterface.updateConfig(conf);
         TebInterface.initialize(new RobotFootprint());
 
         bot.setPosition(new PoseSE2(0,0,0));
 
+
+
+
         launch(args);
     }
 
+    static boolean free_goal_vel = true;
+
+    static PoseSE2 goala = new PoseSE2(5, 0, 0);
+    //        PoseSE2 goal = new PoseSE2(10, -10, 0);
+    static PoseSE2 goal = new PoseSE2(10, 0, 0);
+    //        PoseSE2 goal = new PoseSE2(10, -10, -3.14/2);
+
     private static void updateBot() {
-        PoseSE2 goal = new PoseSE2(-10, 10, 0);
-        PoseSE2 cmd_vel = TebInterface.plan(bot.getPosition(), goal, bot.getVelocity(), false);
+
+
+        PoseSE2 cmd_vel = TebInterface.plan(bot.getPosition(), goala, bot.getVelocity(), free_goal_vel);
         bot.setVelocity(cmd_vel);
         bot.update();
+
+        System.out.print("Vel: ");
+        System.out.print(cmd_vel);
+
+        System.out.print("  Pos: ");
         System.out.println(bot.getPosition());
 
-        double dx = goal.x - bot.getPosition().x;
-        double dy = goal.y - bot.getPosition().y;
-        double delta_orient = normalizeAngle(goal.theta - bot.getPosition().theta, 0.0);
+        double dx = goala.x - bot.getPosition().x;
+        double dy = goala.y - bot.getPosition().y;
+        double delta_orient = normalizeAngle(goala.theta - bot.getPosition().theta, 0.0);
+        if (Math.abs(Math.sqrt(dx * dx + dy * dy)) < conf.xy_goal_tolerance
+            && Math.abs(delta_orient) < conf.yaw_goal_tolerance) {
+            goala = goal;
+            free_goal_vel = false;
+        }
+
+        dx = goal.x - bot.getPosition().x;
+        dy = goal.y - bot.getPosition().y;
+        delta_orient = normalizeAngle(goal.theta - bot.getPosition().theta, 0.0);
         if (Math.abs(Math.sqrt(dx * dx + dy * dy)) < conf.xy_goal_tolerance
             && Math.abs(delta_orient) < conf.yaw_goal_tolerance) {
             timeline.stop();

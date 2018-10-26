@@ -1,7 +1,7 @@
 public class TebConfig {
 
     // ROBOT
-    public double max_vel_x = 0.4; //!< Maximum translational velocity of the robot
+    public double max_vel_x = 1.0; //!< Maximum translational velocity of the robot
     public double max_vel_x_backwards = 0.2; //!< Maximum translational velocity of the robot for driving backwards
     public double max_vel_y = 0.0; //!< Maximum strafing velocity of the robot (should be zero for non-holonomic robots!)
     public double max_vel_theta = 0.3; //!< Maximum angular velocity of the robot
@@ -15,4 +15,8 @@ public class TebConfig {
 
     public double yaw_goal_tolerance = 0.2; //!< Allowed final orientation error
     public double xy_goal_tolerance = 0.2; //!< Allowed final euclidean distance to the goal position
+
+    // OPTIM
+
+    public double weight_kinematics_forward_drive = 1.0;
 }

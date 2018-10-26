@@ -26,7 +26,7 @@ public class PoseSE2 extends Object {
 
     @Override
     public String toString() {
-        DecimalFormat df = new DecimalFormat("-000.00; 000.00");
+        DecimalFormat df = new DecimalFormat("000.00");
         return "(X "+df.format(this.x)+" Y "+df.format(this.y)+" Theta "+df.format(this.theta)+")";
     }
 
