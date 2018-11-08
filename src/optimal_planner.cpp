@@ -1109,6 +1109,13 @@ void TebOptimalPlanner::extractVelocity(const PoseSE2& pose1, const PoseSE2& pos
 
 bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega) const
 {
+
+    std::vector<fake_geometry_msgs::Twist> profile;
+    std::vector<double_t> delta_t;
+    getVelocityProfile(profile, delta_t);
+    for (int i=0; i< profile.size(); i++) {
+        std::cout << profile[i].linear.x << ":" << delta_t[i] << std::endl;
+    }
   if (teb_.sizePoses()<2)
   {
 //    ROS_ERROR("TebOptimalPlanner::getVelocityCommand(): The trajectory contains less than 2 poses. Make sure to init and optimize/plan the trajectory fist.");
@@ -1133,10 +1140,11 @@ bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega
   return true;
 }
 
-void TebOptimalPlanner::getVelocityProfile(std::vector<fake_geometry_msgs::Twist>& velocity_profile) const
+void TebOptimalPlanner::getVelocityProfile(std::vector<fake_geometry_msgs::Twist>& velocity_profile, std::vector<double_t>& delta_t) const
 {
   int n = teb_.sizePoses();
   velocity_profile.resize( n+1 );
+  delta_t.resize(n+1);
 
   // start velocity 
   velocity_profile.front().linear.z = 0;
@@ -1144,15 +1152,18 @@ void TebOptimalPlanner::getVelocityProfile(std::vector<fake_geometry_msgs::Twist
   velocity_profile.front().linear.x = vel_start_.second.linear.x;
   velocity_profile.front().linear.y = vel_start_.second.linear.y;
   velocity_profile.front().angular.z = vel_start_.second.angular.z;
+  delta_t.front() = 0;
   
   for (int i=1; i<n; ++i)
   {
     velocity_profile[i].linear.z = 0;
     velocity_profile[i].angular.x = velocity_profile[i].angular.y = 0;
     extractVelocity(teb_.Pose(i-1), teb_.Pose(i), teb_.TimeDiff(i-1), velocity_profile[i].linear.x, velocity_profile[i].linear.y, velocity_profile[i].angular.z);
+    delta_t[i] = teb_.TimeDiff(i-1);
   }
   
   // goal velocity
+          delta_t.back() = teb_.TimeDiff(n-2);
   velocity_profile.back().linear.z = 0;
   velocity_profile.back().angular.x = velocity_profile.back().angular.y = 0;  
   velocity_profile.back().linear.x = vel_goal_.second.linear.x;

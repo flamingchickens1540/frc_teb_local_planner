@@ -4,7 +4,7 @@
 #include <fake_geometry.h>
 #include "teb_jni_interface.h"
 #include "include/teb_local_planner/pose_se2.h"
-#include "teb-java-example/headers/TebInterface.h"
+#include "jni_bindings/TebInterface.h"
 #include <chrono>  // for high_resolution_clock
 
 teb_local_planner::PoseSE2 poseSE2FromJobject(JNIEnv *env, const jobject &obj) {

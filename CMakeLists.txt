@@ -55,16 +55,27 @@ set(EXTERNAL_INCLUDE_DIRS
         /opt/ros/kinetic/include/
         /usr/include/eigen3/
         /usr/include/pcl-1.7/
-        /usr/include/suitesparse/
+#        /usr/include/suitesparse/
+#        ~/Documents/ADT/
+#        /home/wangl/Documents/network_tables/include
+        /usr/local/include/
         )
 
 include_directories( ${EXTERNAL_INCLUDE_DIRS} )
 
+set(NT_LIBRARIES
+        /usr/local/lib/libntcore.so
+        /usr/local/lib/libwpiutil.so
+        )
 set(EXTERNAL_LIBS
         ${Boost_LIBRARIES}
         ${SUITESPARSE_LIBRARIES}
         ${G2O_LIBRARIES}
+        ${NT_LIBRARIES}
         )
+
+message(STATUS "System: ${G2O_LIBRARIES}")
+
 link_libraries(${EXTERNAL_LIBS})
 
 IF(NOT MSVC)
@@ -81,16 +92,24 @@ else()
 endif()
 endif()
 
-set(SOURCE_FILES teb_jni_interface.cpp src/timed_elastic_band.cpp
+set(SOURCE_FILES
+#        teb_jni_interface.cpp
+        src/timed_elastic_band.cpp
         src/optimal_planner.cpp
         src/obstacles.cpp
         src/visualization.cpp
         src/recovery_behaviors.cpp
         src/teb_config.cpp
+
 #        src/homotopy_class_planner.cpp
 #        src/teb_local_planner_ros.cpp
 #        src/graph_search.cpp
+        src/main.cpp
+        src/main.h
         )
 
-add_library(jni_teb_local_planner SHARED ${SOURCE_FILES})
+#add_library(jni_teb_local_planner SHARED ${SOURCE_FILES})
+add_executable(jni_teb_local_planner ${SOURCE_FILES})
+
+
 

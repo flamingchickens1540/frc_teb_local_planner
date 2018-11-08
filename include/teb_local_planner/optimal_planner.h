@@ -479,7 +479,7 @@ public:
    * to the next step refer to getVelocityCommand().
    * @param[out] velocity_profile velocity profile will be written to this vector (after clearing any existing content) with the size=no_poses+1
    */
-  void getVelocityProfile(std::vector<fake_geometry_msgs::Twist>& velocity_profile) const;
+  void getVelocityProfile(std::vector<fake_geometry_msgs::Twist>& velocity_profile, std::vector<double_t>& delta_t) const;
   
     /**
    * @brief Return the complete trajectory including poses, velocity profiles and temporal information
