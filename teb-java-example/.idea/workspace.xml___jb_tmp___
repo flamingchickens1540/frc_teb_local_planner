@@ -38,10 +38,11 @@
           <entry key="project.open.time.14" value="1" />
           <entry key="project.open.time.16" value="2" />
           <entry key="project.open.time.20" value="2" />
+          <entry key="project.open.time.26" value="1" />
           <entry key="project.open.time.27" value="1" />
           <entry key="project.open.time.3" value="1" />
           <entry key="project.open.time.8" value="1" />
-          <entry key="project.opened" value="9" />
+          <entry key="project.opened" value="10" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -100,7 +101,7 @@
         <entry file="file://$PROJECT_DIR$/src/NetworkTablesTeb.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="194">
-              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
+              <caret line="29" selection-start-line="29" selection-end-line="29" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -385,6 +386,7 @@
       <workItem from="1541639686272" duration="4528000" />
       <workItem from="1541644322506" duration="9000" />
       <workItem from="1541644372414" duration="2372000" />
+      <workItem from="1541647178245" duration="198000" />
     </task>
     <task id="LOCAL-00001" summary="Add scatter chart visualization sample and config jni binding">
       <created>1540494088874</created>
