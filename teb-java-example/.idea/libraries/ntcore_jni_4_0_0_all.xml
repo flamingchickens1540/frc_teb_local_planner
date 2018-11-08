@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="ntcore-jni-4.0.0-all">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ntcore-jni-4.0.0-all.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>
