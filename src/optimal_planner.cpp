@@ -1110,12 +1110,12 @@ void TebOptimalPlanner::extractVelocity(const PoseSE2& pose1, const PoseSE2& pos
 bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega) const
 {
 
-    std::vector<fake_geometry_msgs::Twist> profile;
-    std::vector<double_t> delta_t;
-    getVelocityProfile(profile, delta_t);
-    for (int i=0; i< profile.size(); i++) {
-        std::cout << profile[i].linear.x << ":" << delta_t[i] << std::endl;
-    }
+//    std::vector<fake_geometry_msgs::Twist> profile;
+//    std::vector<double_t> delta_t;
+//    getVelocityProfile(profile, delta_t);
+//    for (int i=0; i< profile.size(); i++) {
+//        std::cout << profile[i].linear.x << ":" << delta_t[i] << std::endl;
+//    }
   if (teb_.sizePoses()<2)
   {
 //    ROS_ERROR("TebOptimalPlanner::getVelocityCommand(): The trajectory contains less than 2 poses. Make sure to init and optimize/plan the trajectory fist.");

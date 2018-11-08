@@ -15,15 +15,7 @@
 #include "teb_local_planner/pose_se2.h"
 #include <chrono>  // for high_resolution_clock
 
-class Derived:public ITableListener {
 
-
-public:
-    void ValueChanged(ITable *source, llvm::StringRef key,
-                      std::shared_ptr<nt::Value> value, bool isNew) {
-        std::cout << "Value Changed" << std::endl;
-    }
-};
 
 
 
@@ -121,22 +113,69 @@ fake_geometry_msgs::Twist plan(
 }
 
 
-int main() {
-//    NetworkTable::SetClientMode();
-//    NetworkTable::SetTeam(1540);
-//
-//
-//    auto table = NetworkTable::GetTable("myTable");
-//    Derived dir;
-//    table->AddTableListener(&dir);
-////    table->PutNumber("test", 123.456);
-    teb_local_planner::PoseSE2 start_pose{0, 0, 0};
-    teb_local_planner::PoseSE2 goal_pose{10, 0, 0};
-    fake_geometry_msgs::Twist start_twist{0, 0, 0};
+class Derived : public ITableListener {
+private:
+    double xpos = 0;
+    double ypos = 0;
+    double thetapos = 0;
 
+    double constrainAngle(double x){
+        x = fmod(x + 180,360);
+        if (x < 0)
+            x += 360;
+        return x - 180;
+    }
+
+public:
+    void ValueChanged(ITable *source, llvm::StringRef key, std::shared_ptr<nt::Value> value, bool isNew) {
+        if (key.equals("X-Position")) {
+            xpos = value->GetDouble();
+            std::cout << "X: " << xpos << " Y: " << ypos << " Theta: " << thetapos << std::endl;
+        } else if (key.equals("Y-Position")) {
+            ypos = value->GetDouble();
+        } else if (key.equals("Gyro Angle")) {
+            thetapos = value->GetDouble();
+        }
+    }
+
+    void Loop() {
+        while (true) {
+            double angleRads = constrainAngle(thetapos) * 3.141592 / 180;
+            teb_local_planner::PoseSE2 start_pose{xpos, ypos, angleRads};
+            teb_local_planner::PoseSE2 goal_pose{10, 0, 0};
+            fake_geometry_msgs::Twist start_twist{0, 0, 0};
+            plan(start_pose, goal_pose, start_twist, false);
+            std::cout << angleRads << std::endl;
+            sleep(0.5);
+        }
+    };
+};
+
+int main() {
+    NetworkTable::SetClientMode();
+    NetworkTable::SetTeam(1540);
+
+
+    auto table = NetworkTable::GetTable("SmartDashboard");
+    Derived dir;
+    table->AddTableListener(&dir);
     updateConfig();
     initialize();
-    plan(start_pose, goal_pose, start_twist, false);
+    dir.Loop();
+
+//    while (true) {
+//        std::cout << table->GetNumber("X-Position", 0) << std::endl;
+//        sleep(0.1);
+//    }
+//    table->PutNumber("test", 123.456);
+
+
+//    teb_local_planner::PoseSE2 start_pose{0, 0, 0};
+//    teb_local_planner::PoseSE2 goal_pose{10, 0, 0};
+//    fake_geometry_msgs::Twist start_twist{0, 0, 0};
+//
+
+//    plan(start_pose, goal_pose, start_twist, false);
 
     std::string test;
     std::cout << "Press enter to continue..." << std::endl;
