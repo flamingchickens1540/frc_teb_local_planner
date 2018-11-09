@@ -14,20 +14,7 @@
 #include <fake_geometry.h>
 #include "teb_local_planner/pose_se2.h"
 #include <chrono>  // for high_resolution_clock
-
-
-
-
-
-//teb_local_planner::PoseSE2 poseSE2FromJobject(JNIEnv *env, const jobject &obj) {
-//    jclass PoseSE2Class = env->GetObjectClass(obj);
-//    teb_local_planner::PoseSE2 pose(
-//            env->GetDoubleField(obj, env->GetFieldID(PoseSE2Class, "x", "D")),
-//            env->GetDoubleField(obj, env->GetFieldID(PoseSE2Class, "y", "D")),
-//            env->GetDoubleField(obj, env->GetFieldID(PoseSE2Class, "theta", "D"))
-//    );
-//    return pose;
-//}
+using namespace std::chrono;
 
 void saturateVelocity(double &vx, double &vy, double &omega, double max_vel_x, double max_vel_y, double max_vel_theta, double max_vel_x_backwards) {
     // Limit translational velocity for forward driving
@@ -66,14 +53,14 @@ void initialize() {
 }
 
 void updateConfig() {
-    cfg_.robot.max_vel_x =              0.4;
-    cfg_.robot.max_vel_x_backwards =    0.2;
+    cfg_.robot.max_vel_x =              1;
+    cfg_.robot.max_vel_x_backwards =    1;
     cfg_.robot.max_vel_y =              0.0;
-    cfg_.robot.max_vel_theta =          0.3;
+    cfg_.robot.max_vel_theta =          3;
 
     cfg_.robot.acc_lim_x =              0.5;
     cfg_.robot.acc_lim_y =              0.5;
-    cfg_.robot.acc_lim_theta =          0.5;
+    cfg_.robot.acc_lim_theta =          3;
 
     cfg_.robot.min_turning_radius =     0.0;
     cfg_.robot.wheelbase =              1.0; // ONLY for car-like robots
@@ -118,6 +105,15 @@ private:
     double xpos = 0;
     double ypos = 0;
     double thetapos = 0;
+    double xvel = 0;
+    double thetavel = 0;
+    double goalx = 0;
+    double goaly = 0;
+    double goaltheta = 0;
+
+    std::chrono::_V2::system_clock::time_point start;
+
+    int count = 0;
 
     double constrainAngle(double x){
         x = fmod(x + 180,360);
@@ -128,25 +124,45 @@ private:
 
 public:
     void ValueChanged(ITable *source, llvm::StringRef key, std::shared_ptr<nt::Value> value, bool isNew) {
-        if (key.equals("X-Position")) {
+//        if (key.equals("timertest")) {
+//            source->PutBoolean("timertest", true);
+//            count++;
+//            if (count%100==0) {
+//                auto duration = duration_cast<microseconds>(high_resolution_clock::now() - start);
+//                std::cout << "Count: " << count << " Time: " << duration.count() << std::endl;
+//                start = high_resolution_clock::now();
+//            }
+//        }
+        if (key.equals("pose-position-x")) {
             xpos = value->GetDouble();
-            std::cout << "X: " << xpos << " Y: " << ypos << " Theta: " << thetapos << std::endl;
-        } else if (key.equals("Y-Position")) {
+        } else if (key.equals("pose-position-y")) {
             ypos = value->GetDouble();
-        } else if (key.equals("Gyro Angle")) {
-            thetapos = value->GetDouble();
+        } else if (key.equals("pose-orientation-z")) {
+            thetapos = constrainAngle(value->GetDouble()) * 3.141592/180;
+        } else if (key.equals("twist-linear-x")) {
+            xvel = value->GetDouble();
+        } else if (key.equals("twist-angular-z")) {
+            thetavel = value->GetDouble();
+        } else if (key.equals("goal-position-x")) {
+            goalx = value->GetDouble();
+        } else if (key.equals("goal-position-y")) {
+            goaly = value->GetDouble();
+        } else if (key.equals("goal-orientation-z")) {
+            goaltheta = value->GetDouble();
         }
     }
 
-    void Loop() {
+    void Loop(std::shared_ptr<NetworkTable> &table) {
         while (true) {
-            double angleRads = constrainAngle(thetapos) * 3.141592 / 180;
-            teb_local_planner::PoseSE2 start_pose{xpos, ypos, angleRads};
-            teb_local_planner::PoseSE2 goal_pose{10, 0, 0};
-            fake_geometry_msgs::Twist start_twist{0, 0, 0};
-            plan(start_pose, goal_pose, start_twist, false);
-            std::cout << angleRads << std::endl;
-            sleep(0.5);
+            teb_local_planner::PoseSE2 start_pose{xpos, ypos, thetapos};
+            teb_local_planner::PoseSE2 goal_pose{goalx, goaly, goaltheta};
+            fake_geometry_msgs::Twist start_twist{xvel, 0, thetavel};
+            fake_geometry_msgs::Twist cmd_vel = plan(start_pose, goal_pose, start_twist, false);
+
+            table->PutNumber("cmd_vel-linear-x", cmd_vel.linear.x);
+            table->PutNumber("cmd_vel-angular-z", -cmd_vel.angular.z);
+
+            std::cout << "X: " << xpos << " Y: " << ypos << " Theta: " << thetapos << " XVel: " << xvel << " ThetaVel: " << thetavel << " cmd_vel_x " << cmd_vel.linear.x << " cmd_vel_theta " << cmd_vel.angular.z << std::endl;
         }
     };
 };
@@ -161,25 +177,7 @@ int main() {
     table->AddTableListener(&dir);
     updateConfig();
     initialize();
-    dir.Loop();
-
-//    while (true) {
-//        std::cout << table->GetNumber("X-Position", 0) << std::endl;
-//        sleep(0.1);
-//    }
-//    table->PutNumber("test", 123.456);
-
-
-//    teb_local_planner::PoseSE2 start_pose{0, 0, 0};
-//    teb_local_planner::PoseSE2 goal_pose{10, 0, 0};
-//    fake_geometry_msgs::Twist start_twist{0, 0, 0};
-//
-
-//    plan(start_pose, goal_pose, start_twist, false);
-
-    std::string test;
-    std::cout << "Press enter to continue..." << std::endl;
-    std::cin >> test;
+    dir.Loop(table);
 }
 
 
