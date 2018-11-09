@@ -102,14 +102,14 @@ fake_geometry_msgs::Twist plan(
 
 class Derived : public ITableListener {
 private:
-    double xpos = 0;
-    double ypos = 0;
-    double thetapos = 0;
-    double xvel = 0;
-    double thetavel = 0;
-    double goalx = 0;
-    double goaly = 0;
-    double goaltheta = 0;
+    double pose_position_x = 0;
+    double pose_position_y = 0;
+    double pose_orientation_z = 0;
+    double twist_linear_x = 0;
+    double twist_angular_z = 0;
+    double goal_position_x = 0;
+    double goal_position_y = 0;
+    double goal_orientation_z = 0;
 
     std::chrono::_V2::system_clock::time_point start;
 
@@ -133,36 +133,42 @@ public:
 //                start = high_resolution_clock::now();
 //            }
 //        }
-        if (key.equals("pose-position-x")) {
-            xpos = value->GetDouble();
+        if        (key.equals("pose-position-x")) {
+            pose_position_x = value->GetDouble();
         } else if (key.equals("pose-position-y")) {
-            ypos = value->GetDouble();
+            pose_position_y = value->GetDouble();
         } else if (key.equals("pose-orientation-z")) {
-            thetapos = constrainAngle(value->GetDouble()) * 3.141592/180;
+            pose_orientation_z = constrainAngle(value->GetDouble()) * 3.141592/180;
         } else if (key.equals("twist-linear-x")) {
-            xvel = value->GetDouble();
+            twist_linear_x = value->GetDouble();
         } else if (key.equals("twist-angular-z")) {
-            thetavel = value->GetDouble();
+            twist_angular_z = value->GetDouble();
         } else if (key.equals("goal-position-x")) {
-            goalx = value->GetDouble();
+            goal_position_x = value->GetDouble();
         } else if (key.equals("goal-position-y")) {
-            goaly = value->GetDouble();
+            goal_position_y = value->GetDouble();
         } else if (key.equals("goal-orientation-z")) {
-            goaltheta = value->GetDouble();
+            goal_orientation_z = value->GetDouble();
         }
     }
 
     void Loop(std::shared_ptr<NetworkTable> &table) {
         while (true) {
-            teb_local_planner::PoseSE2 start_pose{xpos, ypos, thetapos};
-            teb_local_planner::PoseSE2 goal_pose{goalx, goaly, goaltheta};
-            fake_geometry_msgs::Twist start_twist{xvel, 0, thetavel};
+            teb_local_planner::PoseSE2 start_pose   {pose_position_x, pose_position_y, pose_orientation_z};
+            teb_local_planner::PoseSE2 goal_pose    {goal_position_x, goal_position_y, goal_orientation_z};
+            fake_geometry_msgs::Twist start_twist   {twist_linear_x,  0,               twist_angular_z};
             fake_geometry_msgs::Twist cmd_vel = plan(start_pose, goal_pose, start_twist, false);
 
             table->PutNumber("cmd_vel-linear-x", cmd_vel.linear.x);
             table->PutNumber("cmd_vel-angular-z", -cmd_vel.angular.z);
 
-            std::cout << "X: " << xpos << " Y: " << ypos << " Theta: " << thetapos << " XVel: " << xvel << " ThetaVel: " << thetavel << " cmd_vel_x " << cmd_vel.linear.x << " cmd_vel_theta " << cmd_vel.angular.z << std::endl;
+            std::cout << "X: " << pose_position_x
+                      << " Y: " << pose_position_y
+                      << " Theta: " << pose_orientation_z
+                      << " XVel: " << twist_linear_x
+                      << " ThetaVel: " << twist_angular_z
+                      << " cmd_vel_x " << cmd_vel.linear.x
+                      << " cmd_vel_theta " << cmd_vel.angular.z << std::endl;
         }
     };
 };
