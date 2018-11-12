@@ -100,6 +100,7 @@ set(SOURCE_FILES
         src/visualization.cpp
         src/recovery_behaviors.cpp
         src/teb_config.cpp
+        src/PracticalSocket.cpp
 
 #        src/homotopy_class_planner.cpp
 #        src/teb_local_planner_ros.cpp
