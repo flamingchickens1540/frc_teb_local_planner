@@ -226,23 +226,21 @@ int main() {
 
 
     string servAddress = "10.15.40.2";             // First arg: server address
-    char *echoString = "wow";               // Second arg: string to echo
-    int echoStringLen = strlen(echoString);   // Length of string to echo
-    if (echoStringLen > 255) {    // Check input length
-        cerr << "Echo string too long" << endl;
-        exit(1);
-    }
     unsigned short echoServPort = Socket::resolveService("4445", "udp");
+    unsigned short echoServPort2 = Socket::resolveService("9876", "udp");
 
     try {
         UDPSocket sock(4445);
+        UDPSocket sendSock(9876);
 
         // Send the string to the server
-        sock.sendTo(echoString, echoStringLen, servAddress, echoServPort);
+
+
 
         fiveDoubles doubleBuffer = {};
         while (true) {
 //            std::cout << "Waiting..." << echoServPort << std::endl;
+
             if (sock.recvFrom(doubleBuffer.bytes, 8 * 5, servAddress, echoServPort) != 8 * 5) {
                 cerr << "Unable to receive" << endl;
                 exit(1);
@@ -253,6 +251,18 @@ int main() {
                       << " Theta: " << reverseDouble(doubleBuffer.d[2])
                       << " XVel: " << reverseDouble(doubleBuffer.d[3])
                       << " ThetaVel: " << reverseDouble(doubleBuffer.d[4]) << std::endl;
+
+            teb_local_planner::PoseSE2 start_pose{reverseDouble(doubleBuffer.d[0]), reverseDouble(doubleBuffer.d[1]), constrainAngle(reverseDouble(doubleBuffer.d[2])) * 3.141592 / 180};
+            teb_local_planner::PoseSE2 goal_pose{3, 2, 0};
+            fake_geometry_msgs::Twist start_twist{reverseDouble(doubleBuffer.d[3]), 0, reverseDouble(doubleBuffer.d[4])};
+            fake_geometry_msgs::Twist cmd_vel = plan(start_pose, goal_pose, start_twist, false);
+
+            twoDoubles cmd_vel_packet;
+            cmd_vel_packet.d[0] = cmd_vel.linear.x;
+            cmd_vel_packet.d[1] = -cmd_vel.angular.z;
+
+            sendSock.sendTo(cmd_vel_packet.bytes, 8*2, servAddress, echoServPort2);
+
 
         }
         // Destructor closes the socket
