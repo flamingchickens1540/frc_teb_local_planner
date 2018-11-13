@@ -101,6 +101,12 @@ public:
 class NTListener : public ITableListener {
 private:
     std::map<std::string, double*> ntKeys {
+            {"max-vel-x", &teb_cfg.robot.max_vel_x},
+            {"max-vel-x-backwards", &teb_cfg.robot.max_vel_x_backwards},
+            {"acc-lim-x", &teb_cfg.robot.acc_lim_x},
+            {"max-vel-theta", &teb_cfg.robot.max_vel_theta},
+            {"acc-lim-theta", &teb_cfg.robot.acc_lim_theta},
+            {"weight_optimaltime", &teb_cfg.optim.weight_optimaltime},
             {"goal-position-x", &goal_pose.position.x},
             {"goal-position-y", &goal_pose.position.y},
             {"goal-orientation-z", &goal_pose.orientation.z}
