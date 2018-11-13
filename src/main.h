@@ -2,8 +2,8 @@
 // Created by wangl on 11/8/18.
 //
 
-#ifndef JNI_TEB_LOCAL_PLANNER_MAIN_H
-#define JNI_TEB_LOCAL_PLANNER_MAIN_H
+#ifndef FRC_TEB_LOCAL_PLANNER_MAIN_H
+#define FRC_TEB_LOCAL_PLANNER_MAIN_H
 
 #include <teb_local_planner/planner_interface.h>
 #include <teb_local_planner/planner_interface.h>
@@ -137,4 +137,4 @@ public:
     void run();
 };
 
-#endif //JNI_TEB_LOCAL_PLANNER_MAIN_H
+#endif //FRC_TEB_LOCAL_PLANNER_MAIN_H

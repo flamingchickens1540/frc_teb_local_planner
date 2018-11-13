@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(jni_teb_local_planner)
+project(frc_teb_local_planner)
 
 #set(CMAKE_SYSTEM_NAME Linux)
 #set(CMAKE_SYSTEM_PROCESSOR arm)
@@ -111,8 +111,8 @@ set(SOURCE_FILES
         src/main.h
         )
 
-#add_library(jni_teb_local_planner SHARED ${SOURCE_FILES})
-add_executable(jni_teb_local_planner ${SOURCE_FILES})
+#add_library(frc_teb_local_planner SHARED ${SOURCE_FILES})
+add_executable(frc_teb_local_planner ${SOURCE_FILES})
 
 
 
