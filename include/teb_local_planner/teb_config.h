@@ -204,15 +204,15 @@ public:
   /**
   * @brief Construct the TebConfig using default values.
   * @warning If the \b rosparam server or/and \b dynamic_reconfigure (rqt_reconfigure) node are used,
-  *	     the default variables will be overwritten: \n
-  *	     E.g. if \e base_local_planner is utilized as plugin for the navigation stack, the initialize() method will register a
-  * 	     dynamic_reconfigure server. A subset (not all but most) of the parameters are considered for dynamic modifications.
-  * 	     All parameters considered by the dynamic_reconfigure server (and their \b default values) are 
-  * 	     set in \e PROJECT_SRC/cfg/TebLocalPlannerReconfigure.cfg. \n
-  * 	     In addition the rosparam server can be queried to get parameters e.g. defiend in a launch file.
-  * 	     The plugin source (or a possible binary source) can call loadRosParamFromNodeHandle() to update the parameters.
-  * 	     In \e summary, default parameters are loaded in the following order (the right one overrides the left ones): \n
-  * 		<b>TebConfig Constructor defaults << dynamic_reconfigure defaults << rosparam server defaults</b>
+  *     the default variables will be overwritten: \n
+  *     E.g. if \e base_local_planner is utilized as plugin for the navigation stack, the initialize() method will register a
+  *      dynamic_reconfigure server. A subset (not all but most) of the parameters are considered for dynamic modifications.
+  *      All parameters considered by the dynamic_reconfigure server (and their \b default values) are 
+  *      set in \e PROJECT_SRC/cfg/TebLocalPlannerReconfigure.cfg. \n
+  *      In addition the rosparam server can be queried to get parameters e.g. defiend in a launch file.
+  *      The plugin source (or a possible binary source) can call loadRosParamFromNodeHandle() to update the parameters.
+  *      In \e summary, default parameters are loaded in the following order (the right one overrides the left ones): \n
+  * <b>TebConfig Constructor defaults << dynamic_reconfigure defaults << rosparam server defaults</b>
   */
   TebConfig()
   {
@@ -337,6 +337,130 @@ public:
     recovery.oscillation_filter_duration = 10;
 
 
+  }
+
+  //TODO: Is there a better way to copy a tebConfig?
+  TebConfig(const TebConfig& cfg)
+  {
+    //TODO: See if this actually copies the strings
+    odom_topic = cfg.odom_topic;
+    map_frame = cfg.map_frame;
+
+// Trajectory = cfg.// Trajectory;
+
+    trajectory.teb_autosize = cfg.trajectory.teb_autosize;
+    trajectory.dt_ref = cfg.trajectory.dt_ref;
+    trajectory.dt_hysteresis = cfg.trajectory.dt_hysteresis;
+    trajectory.min_samples = cfg.trajectory.min_samples;
+    trajectory.max_samples = cfg.trajectory.max_samples;
+    trajectory.global_plan_overwrite_orientation = cfg.trajectory.global_plan_overwrite_orientation;
+    trajectory.allow_init_with_backwards_motion = cfg.trajectory.allow_init_with_backwards_motion;
+    trajectory.global_plan_viapoint_sep = cfg.trajectory.global_plan_viapoint_sep;
+    trajectory.via_points_ordered = cfg.trajectory.via_points_ordered;
+    trajectory.max_global_plan_lookahead_dist = cfg.trajectory.max_global_plan_lookahead_dist;
+    trajectory.exact_arc_length = cfg.trajectory.exact_arc_length;
+    trajectory.force_reinit_new_goal_dist = cfg.trajectory.force_reinit_new_goal_dist;
+    trajectory.feasibility_check_no_poses = cfg.trajectory.feasibility_check_no_poses;
+    trajectory.publish_feedback = cfg.trajectory.publish_feedback;
+
+// Robot = cfg.// Robot;
+
+    robot.max_vel_x = cfg.robot.max_vel_x;
+    robot.max_vel_x_backwards = cfg.robot.max_vel_x_backwards;
+    robot.max_vel_y = cfg.robot.max_vel_y;
+    robot.max_vel_theta = cfg.robot.max_vel_theta;
+    robot.acc_lim_x = cfg.robot.acc_lim_x;
+    robot.acc_lim_y = cfg.robot.acc_lim_y;
+    robot.acc_lim_theta = cfg.robot.acc_lim_theta;
+    robot.min_turning_radius = cfg.robot.min_turning_radius;
+    robot.wheelbase = cfg.robot.wheelbase;
+    robot.cmd_angle_instead_rotvel = cfg.robot.cmd_angle_instead_rotvel;
+    robot.is_footprint_dynamic = cfg.robot.is_footprint_dynamic;
+
+// GoalTolerance = cfg.// GoalTolerance;
+
+    goal_tolerance.xy_goal_tolerance = cfg.goal_tolerance.xy_goal_tolerance;
+    goal_tolerance.yaw_goal_tolerance = cfg.goal_tolerance.yaw_goal_tolerance;
+    goal_tolerance.free_goal_vel = cfg.goal_tolerance.free_goal_vel;
+    goal_tolerance.complete_global_plan = cfg.goal_tolerance.complete_global_plan;
+
+// Obstacles = cfg.// Obstacles;
+
+    obstacles.min_obstacle_dist = cfg.obstacles.min_obstacle_dist;
+    obstacles.inflation_dist = cfg.obstacles.inflation_dist;
+    obstacles.dynamic_obstacle_inflation_dist = cfg.obstacles.dynamic_obstacle_inflation_dist;
+    obstacles.include_dynamic_obstacles = cfg.obstacles.include_dynamic_obstacles;
+    obstacles.include_costmap_obstacles = cfg.obstacles.include_costmap_obstacles;
+    obstacles.costmap_obstacles_behind_robot_dist = cfg.obstacles.costmap_obstacles_behind_robot_dist;
+    obstacles.obstacle_poses_affected = cfg.obstacles.obstacle_poses_affected;
+    obstacles.legacy_obstacle_association = cfg.obstacles.legacy_obstacle_association;
+    obstacles.obstacle_association_force_inclusion_factor = cfg.obstacles.obstacle_association_force_inclusion_factor;
+    obstacles.obstacle_association_cutoff_factor = cfg.obstacles.obstacle_association_cutoff_factor;
+    obstacles.costmap_converter_plugin = cfg.obstacles.costmap_converter_plugin;
+    obstacles.costmap_converter_spin_thread = cfg.obstacles.costmap_converter_spin_thread;
+    obstacles.costmap_converter_rate = cfg.obstacles.costmap_converter_rate;
+
+// Optimization = cfg.// Optimization;
+
+    optim.no_inner_iterations = cfg.optim.no_inner_iterations;
+    optim.no_outer_iterations = cfg.optim.no_outer_iterations;
+    optim.optimization_activate = cfg.optim.optimization_activate;
+    optim.optimization_verbose = cfg.optim.optimization_verbose;
+    optim.penalty_epsilon = cfg.optim.penalty_epsilon;
+    optim.weight_max_vel_x = cfg.optim.weight_max_vel_x;
+    optim.weight_max_vel_y = cfg.optim.weight_max_vel_y;
+    optim.weight_max_vel_theta = cfg.optim.weight_max_vel_theta;
+    optim.weight_acc_lim_x = cfg.optim.weight_acc_lim_x;
+    optim.weight_acc_lim_y = cfg.optim.weight_acc_lim_y;
+    optim.weight_acc_lim_theta = cfg.optim.weight_acc_lim_theta;
+    optim.weight_kinematics_nh = cfg.optim.weight_kinematics_nh;
+    optim.weight_kinematics_forward_drive = cfg.optim.weight_kinematics_forward_drive;
+    optim.weight_kinematics_turning_radius = cfg.optim.weight_kinematics_turning_radius;
+    optim.weight_optimaltime = cfg.optim.weight_optimaltime;
+    optim.weight_obstacle = cfg.optim.weight_obstacle;
+    optim.weight_inflation = cfg.optim.weight_inflation;
+    optim.weight_dynamic_obstacle = cfg.optim.weight_dynamic_obstacle;
+    optim.weight_dynamic_obstacle_inflation = cfg.optim.weight_dynamic_obstacle_inflation;
+    optim.weight_viapoint = cfg.optim.weight_viapoint;
+    optim.weight_prefer_rotdir = cfg.optim.weight_prefer_rotdir;
+
+    optim.weight_adapt_factor = cfg.optim.weight_adapt_factor;
+
+// Homotopy Class Planner = cfg.// Homotopy Class Planner;
+
+    hcp.enable_homotopy_class_planning = cfg.hcp.enable_homotopy_class_planning;
+    hcp.enable_multithreading = cfg.hcp.enable_multithreading;
+    hcp.simple_exploration = cfg.hcp.simple_exploration;
+    hcp.max_number_classes = cfg.hcp.max_number_classes;
+    hcp.selection_cost_hysteresis = cfg.hcp.selection_cost_hysteresis;
+    hcp.selection_prefer_initial_plan = cfg.hcp.selection_prefer_initial_plan;
+    hcp.selection_obst_cost_scale = cfg.hcp.selection_obst_cost_scale;
+    hcp.selection_viapoint_cost_scale = cfg.hcp.selection_viapoint_cost_scale;
+    hcp.selection_alternative_time_cost = cfg.hcp.selection_alternative_time_cost;
+
+    hcp.obstacle_keypoint_offset = cfg.hcp.obstacle_keypoint_offset;
+    hcp.obstacle_heading_threshold = cfg.hcp.obstacle_heading_threshold;
+    hcp.roadmap_graph_no_samples = cfg.hcp.roadmap_graph_no_samples;
+    hcp.roadmap_graph_area_width = cfg.hcp.roadmap_graph_area_width;
+    hcp.roadmap_graph_area_length_scale = cfg.hcp.roadmap_graph_area_length_scale;
+    hcp.h_signature_prescaler = cfg.hcp.h_signature_prescaler;
+    hcp.h_signature_threshold = cfg.hcp.h_signature_threshold;
+    hcp.switching_blocking_period = cfg.hcp.switching_blocking_period;
+
+    hcp.viapoints_all_candidates = cfg.hcp.viapoints_all_candidates;
+
+    hcp.visualize_hc_graph = cfg.hcp.visualize_hc_graph;
+    hcp.visualize_with_time_as_z_axis_scale = cfg.hcp.visualize_with_time_as_z_axis_scale;
+
+// Recovery = cfg.// Recovery;
+
+    recovery.shrink_horizon_backup = cfg.recovery.shrink_horizon_backup;
+    recovery.shrink_horizon_min_duration = cfg.recovery.shrink_horizon_min_duration;
+    recovery.oscillation_recovery = cfg.recovery.oscillation_recovery;
+    recovery.oscillation_v_eps = cfg.recovery.oscillation_v_eps;
+    recovery.oscillation_omega_eps = cfg.recovery.oscillation_omega_eps;
+    recovery.oscillation_recovery_min_duration = cfg.recovery.oscillation_recovery_min_duration;
+    recovery.oscillation_filter_duration = cfg.recovery.oscillation_filter_duration;
   }
   
   /**

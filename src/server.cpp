@@ -8,7 +8,7 @@
 #include "networktables/NetworkTable.h"
 #include "tables/ITableListener.h"
 
-class Derived:public ITableListener {
+class UDPPlannerServer:public ITableListener {
 
 
 public:
@@ -24,7 +24,7 @@ int main() {
 
 
     auto table = NetworkTable::GetTable("myTable");
-    Derived dir;
+    UDPPlannerServer dir;
     table->AddTableListener(&dir);
     table->PutNumber("test", 123.456);
 }

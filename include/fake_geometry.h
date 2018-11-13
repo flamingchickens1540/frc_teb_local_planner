@@ -11,10 +11,21 @@ namespace fake_geometry_msgs {
         double y;
         double z;
     };
+    struct Quaternion {
+        double w;
+        double x;
+        double y;
+        double z;
+    };
     class Twist {
     public:
         Vector3 linear;
         Vector3 angular;
+    };
+    class Pose {
+    public:
+        Vector3 position;
+        Quaternion orientation;
     };
 }
 
