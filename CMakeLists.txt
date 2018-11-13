@@ -12,7 +12,6 @@ message(STATUS "System: ${CMAKE_SYSTEM}")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 message(STATUS "${CMAKE_MODULE_PATH}")
 
-find_package(JNI REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system thread graph)
 find_package(SUITESPARSE REQUIRED)
 find_package(G2O REQUIRED)
@@ -33,7 +32,6 @@ set(EXTERNAL_INCLUDE_DIRS
         ${Eigen_INCLUDE_DIRS}
         ${SUITESPARSE_INCLUDE_DIRS}
         ${G2O_INCLUDE_DIR}
-        ${JNI_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIR}
         ${PROJECT_SOURCE_DIR}/include/
 
