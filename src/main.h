@@ -21,14 +21,20 @@
 #include <fake_geometry.h>
 #include "PracticalSocket.h"
 
+static teb_local_planner::ObstContainer obstacles{};
+static teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_shared<teb_local_planner::PointRobotFootprint>();
+static teb_local_planner::TebVisualizationPtr visual;
+static teb_local_planner::ViaPointContainer via_points{};
 
-std::mutex cfg_goal_mtx;
+static std::mutex cfg_goal_mtx;
 static teb_local_planner::TebConfig teb_cfg;
 static fake_geometry_msgs::Pose goal_pose;
+static bool newCfgReceived;
 
-std::mutex pose_twist_mtx;
+static std::mutex pose_twist_mtx;
 static fake_geometry_msgs::Pose current_pose;
 static fake_geometry_msgs::Twist current_twist;
+static bool newPoseTwistReceived;
 
 void saturateVelocity(double &vx, double &vy, double &omega, double max_vel_x, double max_vel_y, double max_vel_theta,
                       double max_vel_x_backwards) {
@@ -92,7 +98,7 @@ public:
     void run();
 };
 
-class NTRunnable : public ITableListener {
+class NTListener : public ITableListener {
 private:
     std::map<std::string, double*> ntKeys {
             {"goal-position-x", &goal_pose.position.x},
@@ -100,8 +106,8 @@ private:
             {"goal-orientation-z", &goal_pose.orientation.z}
     };
 public:
-//    NTRunnable();
-    void ValueChanged(ITable *source, llvm::StringRef testKey, std::shared_ptr<nt::Value> value, bool isNew);
+    NTListener(shared_ptr<NetworkTable> source);
+    void ValueChanged(ITable *source, llvm::StringRef testKey, std::shared_ptr<nt::Value> value, bool isNew) override;
 };
 
 class PlannerRunnable {

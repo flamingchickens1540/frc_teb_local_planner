@@ -23,12 +23,14 @@ void UDPRunnable::run() {
                 pose_twist_mtx.lock();
                 current_pose.position.x = reverseDouble(doubleBuffer[0]);
                 current_pose.position.y = reverseDouble(doubleBuffer[1]);
-                current_pose.orientation.z = reverseDouble(doubleBuffer[2]);
+                current_pose.orientation.z = constrainAngle(reverseDouble(doubleBuffer[2])) * 3.141592 / 180;
                 current_twist.linear.x = reverseDouble(doubleBuffer[3]);
                 current_twist.angular.z = reverseDouble(doubleBuffer[4]);
+                newPoseTwistReceived = true;
                 pose_twist_mtx.unlock();
             } else {
                 cerr << "Unable to receive data!" << endl;
+                pose_twist_mtx.unlock();
             }
         }
     } catch (SocketException &e) {
@@ -37,15 +39,29 @@ void UDPRunnable::run() {
     }
 }
 
-void NTRunnable::ValueChanged(ITable *source, llvm::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
-    for( auto const& symbol : ntKeys ) {
+NTListener::NTListener(shared_ptr<NetworkTable> source) {
+    for (auto const &symbol : ntKeys) {
+        source->PutNumber(symbol.first, *symbol.second);
+    }
+}
+
+void NTListener::ValueChanged(ITable *source, llvm::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
+    cfg_goal_mtx.lock();
+    for (auto const &symbol : ntKeys) {
         if (testKey.equals(symbol.first)) {
             *symbol.second = value->GetDouble();
+            if (testKey.equals("goal-position-x")) {
+                cout << "Current goal x: " << goal_pose.position.x << endl;
+            }
+            newCfgReceived = true;
         }
     }
+    cfg_goal_mtx.unlock();
 };
 
 PlannerRunnable::PlannerRunnable() {
+    newPoseTwistReceived = false;
+    newCfgReceived = true;
     try {
         sendSocket = new UDPSocket(localPortOut);
         cout << "Successfully opened port " << localPortOut << "." << endl;
@@ -54,10 +70,6 @@ PlannerRunnable::PlannerRunnable() {
     }
 
     temp_teb_cfg = new teb_local_planner::TebConfig();
-    teb_local_planner::ObstContainer obstacles{};
-    teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_shared<teb_local_planner::PointRobotFootprint>();
-    teb_local_planner::TebVisualizationPtr visual;
-    teb_local_planner::ViaPointContainer via_points{};
 
     planner = teb_local_planner::PlannerInterfacePtr(
             new teb_local_planner::TebOptimalPlanner(*temp_teb_cfg,
@@ -71,38 +83,57 @@ PlannerRunnable::PlannerRunnable() {
 }
 
 void PlannerRunnable::run() {
-    // Copy input data into temporary variables so we don't hold up the other threads
-    pose_twist_mtx.lock();
-    teb_local_planner::PoseSE2 temp_current_pose {
-        current_pose.position.x,
-        current_pose.position.y,
-        current_pose.orientation.z
-    };
-    fake_geometry_msgs::Twist start_twist {
-        current_twist.linear.x,
-        current_twist.linear.y,
-        current_twist.angular.z
-    };
-    pose_twist_mtx.unlock();
+    while (true) {
+        // Copy input data into temporary variables so we don't hold up the other threads
+        pose_twist_mtx.lock();
+        if (!newPoseTwistReceived) {
+            pose_twist_mtx.unlock();
+            continue;
+        }
+        teb_local_planner::PoseSE2 temp_current_pose{
+                current_pose.position.x,
+                current_pose.position.y,
+                current_pose.orientation.z
+        };
+        fake_geometry_msgs::Twist start_twist{
+                current_twist.linear.x,
+                current_twist.linear.y,
+                current_twist.angular.z
+        };
+        newPoseTwistReceived = false;
+        pose_twist_mtx.unlock();
 
-    cfg_goal_mtx.lock();
-    temp_teb_cfg = new teb_local_planner::TebConfig(teb_cfg); // Copy teb config
-    teb_local_planner::PoseSE2 temp_goal_pose {
-        goal_pose.position.x,
-        goal_pose.position.y,
-        goal_pose.orientation.z
-    };
-    cfg_goal_mtx.unlock();
+        cfg_goal_mtx.lock();
+        teb_local_planner::PoseSE2 temp_goal_pose{
+                goal_pose.position.x,
+                goal_pose.position.y,
+                goal_pose.orientation.z
+        };
+        if (newCfgReceived) {
+            temp_teb_cfg = new teb_local_planner::TebConfig(teb_cfg); // Copy teb config
+            planner = teb_local_planner::PlannerInterfacePtr(
+                    new teb_local_planner::TebOptimalPlanner(*temp_teb_cfg,
+                                                             &obstacles,
+                                                             robot_model,
+                                                             visual,
+                                                             &via_points
+                    )
+            );
+            cout << "Updated goal and cfg!" << endl;
+            newCfgReceived = false;
+        }
+        cfg_goal_mtx.unlock();
 
-    // Actually calculate plan
-    fake_geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, start_twist, false);
+        // Actually calculate plan
+        fake_geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, start_twist, false);
 
-    double cmd_vel_packet[3];
-    cmd_vel_packet[0] = 0;  // TODO: Add timestamp (or at least incrementing counter)
-    cmd_vel_packet[1] = cmd_vel.linear.x;
-    cmd_vel_packet[2] = -cmd_vel.angular.z;
+        double cmd_vel_packet[2];
+//        cmd_vel_packet[0] = 0;  // TODO: Add timestamp (or at least incrementing counter)
+        cmd_vel_packet[0] = cmd_vel.linear.x;
+        cmd_vel_packet[1] = -cmd_vel.angular.z;
 
-    sendSocket->sendTo(cmd_vel_packet, sizeof(double)*3, serverAddress, localPortOut);
+        sendSocket->sendTo(cmd_vel_packet, sizeof(double) * 2, serverAddress, localPortOut);
+    }
 }
 
 fake_geometry_msgs::Twist PlannerRunnable::plan(
@@ -136,5 +167,16 @@ fake_geometry_msgs::Twist PlannerRunnable::plan(
 }
 
 int main() {
-    thread UDPThread (&UDPRunnable::run);
+    thread udpThread(&UDPRunnable::run, UDPRunnable());
+    thread plannerThread(&PlannerRunnable::run, PlannerRunnable());
+
+    NetworkTable::SetClientMode();
+    NetworkTable::SetTeam(1540);
+
+    shared_ptr<NetworkTable> table = NetworkTable::GetTable("SmartDashboard");
+    NTListener ntListener(table);
+    table->AddTableListener(&ntListener);
+
+    udpThread.join();
+    plannerThread.join();
 }
