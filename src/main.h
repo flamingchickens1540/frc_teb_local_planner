@@ -101,15 +101,15 @@ public:
 class NTListener : public ITableListener {
 private:
     std::map<std::string, double*> ntKeys {
-            {"max-vel-x", &teb_cfg.robot.max_vel_x},
-            {"max-vel-x-backwards", &teb_cfg.robot.max_vel_x_backwards},
-            {"acc-lim-x", &teb_cfg.robot.acc_lim_x},
-            {"max-vel-theta", &teb_cfg.robot.max_vel_theta},
-            {"acc-lim-theta", &teb_cfg.robot.acc_lim_theta},
-            {"weight_optimaltime", &teb_cfg.optim.weight_optimaltime},
-            {"goal-position-x", &goal_pose.position.x},
-            {"goal-position-y", &goal_pose.position.y},
-            {"goal-orientation-z", &goal_pose.orientation.z}
+            {"max_vel_x", &teb_cfg.robot.max_vel_x},
+            {"max_vel_x_backwards", &teb_cfg.robot.max_vel_x_backwards},
+            {"acc_lim_x", &teb_cfg.robot.acc_lim_x},
+            {"max_vel_theta", &teb_cfg.robot.max_vel_theta},
+            {"acc_lim_theta", &teb_cfg.robot.acc_lim_theta},
+//            {"weight_optimaltime", &teb_cfg.optim.weight_optimaltime},
+            {"goal_position_x", &goal_pose.position.x},
+            {"goal_position_y", &goal_pose.position.y},
+            {"goal_orientation_z", &goal_pose.orientation.z}
     };
 public:
     NTListener(shared_ptr<NetworkTable> source);

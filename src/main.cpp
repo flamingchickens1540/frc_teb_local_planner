@@ -40,6 +40,16 @@ void UDPRunnable::run() {
 }
 
 NTListener::NTListener(shared_ptr<NetworkTable> source) {
+    // Defaults
+    teb_cfg.robot.max_vel_theta = 3.0;
+    teb_cfg.robot.acc_lim_theta = 3.0;
+
+    teb_cfg.robot.max_vel_x = 1.5;
+    teb_cfg.robot.max_vel_x_backwards = 1.4;
+    teb_cfg.robot.acc_lim_x = 0.7;
+
+    teb_cfg.optim.weight_optimaltime = 4.0;
+
     for (auto const &symbol : ntKeys) {
         source->PutNumber(symbol.first, *symbol.second);
     }
