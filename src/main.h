@@ -36,6 +36,8 @@ static fake_geometry_msgs::Pose current_pose;
 static fake_geometry_msgs::Twist current_twist;
 static bool newPoseTwistReceived;
 
+static long long counter = 0;
+
 void saturateVelocity(double &vx, double &vy, double &omega, double max_vel_x, double max_vel_y, double max_vel_theta,
                       double max_vel_x_backwards) {
     // Limit translational velocity for forward driving
@@ -100,7 +102,7 @@ public:
 
 class NTListener : public ITableListener {
 private:
-    std::map<std::string, double*> ntKeys {
+    std::map<std::string, double*> ntDoubleKeys {
             {"max_vel_x", &teb_cfg.robot.max_vel_x},
             {"max_vel_x_backwards", &teb_cfg.robot.max_vel_x_backwards},
             {"acc_lim_x", &teb_cfg.robot.acc_lim_x},
@@ -109,7 +111,12 @@ private:
 //            {"weight_optimaltime", &teb_cfg.optim.weight_optimaltime},
             {"goal_position_x", &goal_pose.position.x},
             {"goal_position_y", &goal_pose.position.y},
-            {"goal_orientation_z", &goal_pose.orientation.z}
+            {"goal_orientation_z", &goal_pose.orientation.z},
+            {"min_turning_radius", &teb_cfg.robot.min_turning_radius},
+            {"weight_kinematics_forward_drive", &teb_cfg.optim.weight_kinematics_forward_drive}
+    };
+    std::map<std::string, bool*> ntBoolKeys {
+            {"free_goal_vel", &teb_cfg.goal_tolerance.free_goal_vel}
     };
 public:
     NTListener(shared_ptr<NetworkTable> source);

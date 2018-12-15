@@ -48,21 +48,45 @@ NTListener::NTListener(shared_ptr<NetworkTable> source) {
     teb_cfg.robot.max_vel_x_backwards = 1.4;
     teb_cfg.robot.acc_lim_x = 0.7;
 
+    teb_cfg.robot.min_turning_radius = 0.0;
+
     teb_cfg.optim.weight_optimaltime = 4.0;
 
-    for (auto const &symbol : ntKeys) {
+    teb_cfg.goal_tolerance.free_goal_vel = false;
+
+    teb_cfg.optim.weight_kinematics_forward_drive = 1.0;
+
+    for (auto const &symbol : ntDoubleKeys) {
         source->PutNumber(symbol.first, *symbol.second);
+    }
+    for (auto const &symbol : ntBoolKeys) {
+        source->PutBoolean(symbol.first, *symbol.second);
     }
 }
 
 void NTListener::ValueChanged(ITable *source, llvm::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
     cfg_goal_mtx.lock();
-    for (auto const &symbol : ntKeys) {
+    for (auto const &symbol : ntDoubleKeys) {
         if (testKey.equals(symbol.first)) {
             *symbol.second = value->GetDouble();
             if (testKey.equals("goal-position-x")) {
                 cout << "Current goal x: " << goal_pose.position.x << endl;
             }
+//            if (testKey.equals("goal-position-x")) {
+//                cout << "Current goal x: " << goal_pose.position.x << endl;
+//            }
+            newCfgReceived = true;
+        }
+    }
+    for (auto const &symbol : ntBoolKeys) {
+        if (testKey.equals(symbol.first)) {
+            *symbol.second = value->GetBoolean();
+//            if (testKey.equals("free_goal_vel")) {
+//                cout << "Current goal x: " << goal_pose.position.x << endl;
+//            }
+//            if (testKey.equals("goal-position-x")) {
+//                cout << "Current goal x: " << goal_pose.position.x << endl;
+//            }
             newCfgReceived = true;
         }
     }
@@ -135,7 +159,7 @@ void PlannerRunnable::run() {
         cfg_goal_mtx.unlock();
 
         // Actually calculate plan
-        fake_geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, start_twist, false);
+        fake_geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, start_twist, teb_cfg.goal_tolerance.free_goal_vel);
 
         double cmd_vel_packet[2];
 //        cmd_vel_packet[0] = 0;  // TODO: Add timestamp (or at least incrementing counter)
@@ -169,6 +193,24 @@ fake_geometry_msgs::Twist PlannerRunnable::plan(
                      temp_teb_cfg->robot.max_vel_theta,
                      temp_teb_cfg->robot.max_vel_x_backwards);
 
+//    planner->
+
+//    cout
+//         << " Free_Goal_Vel: " << temp_teb_cfg->goal_tolerance.free_goal_vel
+//         << " MVX: " << temp_teb_cfg->robot.max_vel_x
+//         << " MVXB: " << temp_teb_cfg->robot.max_vel_x_backwards
+//         << " AX: " << temp_teb_cfg->robot.acc_lim_x
+//         << " MVT: " << temp_teb_cfg->robot.max_vel_theta
+//         << " AT: " << temp_teb_cfg->robot.acc_lim_theta
+//            << endl;
+// cout
+//         << " Linear X: " << start_pose.x()
+//         << " Linear X: " << start_twist.angular.x
+//         << " MVXB: " << temp_teb_cfg->robot.max_vel_x_backwards
+//         << " AX: " << temp_teb_cfg->robot.acc_lim_x
+//         << " MVT: " << temp_teb_cfg->robot.max_vel_theta
+//         << " AT: " << temp_teb_cfg->robot.acc_lim_theta
+//            << endl;
     fake_geometry_msgs::Twist cmd_vel{};
     cmd_vel.linear.x = x;
     cmd_vel.linear.y = y;
