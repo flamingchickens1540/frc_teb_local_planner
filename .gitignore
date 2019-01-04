@@ -9,3 +9,4 @@ Makefile
 *.log
 *.class
 **/out
+cmake-build-debug/
