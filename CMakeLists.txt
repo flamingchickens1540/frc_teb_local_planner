@@ -38,6 +38,7 @@ set(NT_LIBRARIES
         /usr/local/lib/libntcore.so
         /usr/local/lib/libwpiutil.so
         )
+
 set(EXTERNAL_LIBS
         ${Boost_LIBRARIES}
         ${SUITESPARSE_LIBRARIES}
