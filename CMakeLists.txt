@@ -69,7 +69,7 @@ set(SOURCE_FILES
         src/visualization.cpp
         src/recovery_behaviors.cpp
         src/teb_config.cpp
-        src/PracticalSocket.cpp
+        src/practical_socket.cpp
 
         src/main.cpp
         src/main.h

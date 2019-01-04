@@ -19,7 +19,7 @@
 #include "tables/ITableListener.h"
 
 #include <fake_geometry.h>
-#include "PracticalSocket.h"
+#include "practical_socket.h"
 
 static teb_local_planner::ObstContainer obstacles{};
 static teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_shared<teb_local_planner::PointRobotFootprint>();
