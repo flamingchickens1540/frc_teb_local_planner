@@ -16,33 +16,22 @@ find_package(Boost REQUIRED COMPONENTS system thread graph)
 find_package(SUITESPARSE REQUIRED)
 find_package(G2O REQUIRED)
 
-# Eigen3 FindScript Backward compatibility (ubuntu saucy)
-# Since FindEigen.cmake is deprecated starting from jade.
-if (EXISTS "FindEigen3.cmake")
-  find_package(Eigen3 REQUIRED)
-  set(Eigen_INCLUDE_DIRS ${Eigen3_INCLUDE_DIRS})
-elseif (EXISTS "FindEigen.cmake")
-  find_package(Eigen REQUIRED)
-elseif (EXISTS "FindEigen.cmake")
-  message(WARNING "No findEigen cmake script found. You must provde one of them,
-  e.g. by adding it to ${PROJECT_SOURCE_DIR}/cmake_modules.")
-endif (EXISTS "FindEigen3.cmake")
-
 set(EXTERNAL_INCLUDE_DIRS
-        ${Eigen_INCLUDE_DIRS}
         ${SUITESPARSE_INCLUDE_DIRS}
         ${G2O_INCLUDE_DIR}
         ${Boost_INCLUDE_DIR}
-        ${PROJECT_SOURCE_DIR}/include/
+
+        /usr/include/eigen3/
+        /usr/local/include/networktables/
 
         # Iffy includes
         /opt/ros/kinetic/include/
-        /usr/include/eigen3/
-        /usr/include/pcl-1.7/
-        /usr/local/include/
         )
 
-include_directories( ${EXTERNAL_INCLUDE_DIRS} )
+include_directories(
+        include
+        ${EXTERNAL_INCLUDE_DIRS}
+)
 
 set(NT_LIBRARIES
         /usr/local/lib/libntcore.so
@@ -82,9 +71,6 @@ set(SOURCE_FILES
         src/teb_config.cpp
         src/PracticalSocket.cpp
 
-#        src/homotopy_class_planner.cpp
-#        src/teb_local_planner_ros.cpp
-#        src/graph_search.cpp
         src/main.cpp
         src/main.h
         )
