@@ -23,6 +23,7 @@ set(EXTERNAL_INCLUDE_DIRS
 
         /usr/include/eigen3/
         /usr/local/include/networktables/
+        /usr/include/pcl-1.7/
 
         # Iffy includes
         /opt/ros/kinetic/include/
