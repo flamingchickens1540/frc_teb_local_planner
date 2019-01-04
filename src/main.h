@@ -6,7 +6,6 @@
 #define FRC_TEB_LOCAL_PLANNER_MAIN_H
 
 #include <teb_local_planner/planner_interface.h>
-#include <teb_local_planner/planner_interface.h>
 #include <teb_local_planner/optimal_planner.h>
 #include <teb_local_planner/teb_config.h>
 #include <teb_local_planner/pose_se2.h>
