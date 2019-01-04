@@ -69,24 +69,12 @@ void NTListener::ValueChanged(ITable *source, llvm::StringRef testKey, shared_pt
     for (auto const &symbol : ntDoubleKeys) {
         if (testKey.equals(symbol.first)) {
             *symbol.second = value->GetDouble();
-            if (testKey.equals("goal-position-x")) {
-                cout << "Current goal x: " << goal_pose.position.x << endl;
-            }
-//            if (testKey.equals("goal-position-x")) {
-//                cout << "Current goal x: " << goal_pose.position.x << endl;
-//            }
             newCfgReceived = true;
         }
     }
     for (auto const &symbol : ntBoolKeys) {
         if (testKey.equals(symbol.first)) {
             *symbol.second = value->GetBoolean();
-//            if (testKey.equals("free_goal_vel")) {
-//                cout << "Current goal x: " << goal_pose.position.x << endl;
-//            }
-//            if (testKey.equals("goal-position-x")) {
-//                cout << "Current goal x: " << goal_pose.position.x << endl;
-//            }
             newCfgReceived = true;
         }
     }
