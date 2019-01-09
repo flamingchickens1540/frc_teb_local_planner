@@ -67,7 +67,8 @@ NTListener::NTListener(shared_ptr<NetworkTable> source) {
 void NTListener::ValueChanged(ITable *source, llvm::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
     cfg_goal_mtx.lock();
     for (auto const &symbol : ntDoubleKeys) {
-        if (testKey.equals(symbol.first)) {
+//        if (testKey.equals(symbol.first)) {
+        if (testKey.substr(8).equals(llvm::StringRef(symbol.first).substr(8))) {
             *symbol.second = value->GetDouble();
             newCfgReceived = true;
         }
