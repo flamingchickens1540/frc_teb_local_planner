@@ -22,7 +22,7 @@ set(EXTERNAL_INCLUDE_DIRS
         ${Boost_INCLUDE_DIR}
 
         /usr/include/eigen3/
-        /usr/local/include/networktables/
+        /usr/local/include/ntcore/
         /usr/include/pcl-1.7/
 
         # Iffy includes
