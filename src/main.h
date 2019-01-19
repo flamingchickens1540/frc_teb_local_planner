@@ -16,6 +16,7 @@
 
 #include "networktables/NetworkTable.h"
 #include "tables/ITableListener.h"
+#include "wpi/StringRef.h"
 
 #include <fake_geometry.h>
 #include "practical_socket.h"
@@ -119,7 +120,7 @@ private:
     };
 public:
     NTListener(shared_ptr<NetworkTable> source);
-    void ValueChanged(ITable *source, llvm::StringRef testKey, std::shared_ptr<nt::Value> value, bool isNew) override;
+    void ValueChanged(ITable *source, wpi::StringRef testKey, std::shared_ptr<nt::Value> value, bool isNew) override;
 };
 
 class PlannerRunnable {

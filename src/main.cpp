@@ -2,6 +2,7 @@
 // Created by wangl on 11/8/18.
 //
 
+#include <networktables/NetworkTableInstance.h>
 #include "main.h"
 
 using namespace std::chrono;
@@ -64,11 +65,11 @@ NTListener::NTListener(shared_ptr<NetworkTable> source) {
     }
 }
 
-void NTListener::ValueChanged(ITable *source, llvm::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
+void NTListener::ValueChanged(ITable *source, wpi::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
     cfg_goal_mtx.lock();
     for (auto const &symbol : ntDoubleKeys) {
 //        if (testKey.equals(symbol.first)) {
-        if (testKey.substr(8).equals(llvm::StringRef(symbol.first).substr(8))) {
+        if (testKey.substr(8).equals(wpi::StringRef(symbol.first).substr(8))) {
             *symbol.second = value->GetDouble();
             newCfgReceived = true;
         }
@@ -211,9 +212,12 @@ int main() {
     thread udpThread(&UDPRunnable::run, UDPRunnable());
     thread plannerThread(&PlannerRunnable::run, PlannerRunnable());
 
+//    auto ntinst = nt::NetworkTableInstance::GetDefault();
+//    ntinst.StartClientTeam(1540);
     NetworkTable::SetClientMode();
     NetworkTable::SetTeam(1540);
 
+//    auto table = ntinst.GetTable("SmartDashboard");
     shared_ptr<NetworkTable> table = NetworkTable::GetTable("SmartDashboard");
     NTListener ntListener(table);
     table->AddTableListener(&ntListener);
