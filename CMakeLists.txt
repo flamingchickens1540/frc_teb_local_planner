@@ -34,6 +34,8 @@ message(STATUS "System: ${CMAKE_SYSTEM}")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake_modules)
 message(STATUS "${CMAKE_MODULE_PATH}")
 
+SET(BOOST_LIBRARYDIR ${CMAKE_FIND_ROOT_PATH}/usr/lib/arm-linux-gnueabihf)
+
 find_package(Boost REQUIRED COMPONENTS system thread graph)
 find_package(SUITESPARSE REQUIRED)
 find_package(G2O REQUIRED)
@@ -49,7 +51,8 @@ set(EXTERNAL_INCLUDE_DIRS
         ${CMAKE_FIND_ROOT_PATH}/usr/include/eigen3/
 #        /usr/local/include/ntcore/
         ${CMAKE_FIND_ROOT_PATH}/usr/include/pcl-1.7/
-        /home/wangl/RaspberryPi/rootfs/usr/include/arm-linux-gnueabihf/
+        ${CMAKE_FIND_ROOT_PATH}/usr/include/arm-linux-gnueabihf
+#        /home/wangl/RaspberryPi/rootfs/usr/include/arm-linux-gnueabihf/
 
         # Iffy includes
         /opt/ros/kinetic/include/
@@ -62,11 +65,27 @@ include_directories(
         ${EXTERNAL_INCLUDE_DIRS}
 )
 
-link_directories(lib)
+link_directories(lib
+        ${CMAKE_FIND_ROOT_PATH}/usr/lib/arm-linux-gnueabihf
+        ${CMAKE_FIND_ROOT_PATH}/usr/lib/lapack
+        ${CMAKE_FIND_ROOT_PATH}/usr/lib/libblas
+        )
+
 
 set(NT_LIBRARIES
 #        /usr/local/lib/libntcore.so
 #        /usr/local/lib/libwpiutil.so
+        boost_regex.so.1.62.0
+        icudata.so.57
+        icui18n.so.57
+        icuuc.so.57
+        suitesparseconfig.so.4
+        metis.so.5
+        lapack.so.3
+        lapack.so
+        blas.so.3
+        gfortran.so.3
+
         wpiHal.so
         wpilibc.so
         wpiHal.so
@@ -99,7 +118,10 @@ set(EXTERNAL_LIBS
         ${NT_LIBRARIES}
         )
 
+message(STATUS "System: ${Boost_LIBRARIES}")
+message(STATUS "System: ${SUITESPARSE_LIBRARIES}")
 message(STATUS "System: ${G2O_LIBRARIES}")
+message(STATUS "System: ${NT_LIBRARIES}")
 
 link_libraries(${EXTERNAL_LIBS})
 
