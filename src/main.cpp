@@ -154,7 +154,7 @@ void PlannerRunnable::run() {
         double cmd_vel_packet[2];
 //        cmd_vel_packet[0] = 0;  // TODO: Add timestamp (or at least incrementing counter)
         cmd_vel_packet[0] = cmd_vel.linear.x;
-        cmd_vel_packet[1] = -cmd_vel.angular.z;
+        cmd_vel_packet[1] = cmd_vel.angular.z;
 
         sendSocket->sendTo(cmd_vel_packet, sizeof(double) * 2, serverAddress, localPortOut);
     }
