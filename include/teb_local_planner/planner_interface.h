@@ -53,7 +53,6 @@
 #include <geometry_msgs/PoseArray.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/TwistStamped.h>
-#include <fake_geometry.h>
 
 
 namespace teb_local_planner

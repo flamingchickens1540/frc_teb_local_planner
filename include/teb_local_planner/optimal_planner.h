@@ -73,8 +73,7 @@
 #include <nav_msgs/Path.h>
 #include <geometry_msgs/PoseStamped.h>
 #include <tf/transform_datatypes.h>
-//#include <teb_local_planner/TrajectoryMsg.h>
-#include <fake_geometry.h>
+#include <teb_local_planner/TrajectoryMsg.h>
 
 
 #include <nav_msgs/Odometry.h>

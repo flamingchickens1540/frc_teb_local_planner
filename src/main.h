@@ -18,7 +18,6 @@
 #include "tables/ITableListener.h"
 #include "wpi/StringRef.h"
 
-#include <fake_geometry.h>
 #include "practical_socket.h"
 
 static teb_local_planner::ObstContainer obstacles{};
@@ -28,11 +27,11 @@ static teb_local_planner::ViaPointContainer via_points{};
 
 static std::mutex cfg_mtx;
 static teb_local_planner::TebConfig teb_cfg;
-static fake_geometry_msgs::Pose goal_pose;
+static geometry_msgs::Pose goal_pose;
 static bool newCfgReceived;
 
 static std::mutex pose_twist_goal_mtx;
-static fake_geometry_msgs::Pose current_pose;
+static geometry_msgs::Pose current_pose;
 static geometry_msgs::Twist current_twist;
 static bool newPoseTwistReceived;
 
