@@ -110,7 +110,7 @@ set(SOURCE_FILES
 
         src/main.cpp
         src/main.h
-        )
+        src/network_config.h)
 
 add_executable(frc_teb_local_planner ${SOURCE_FILES})
 

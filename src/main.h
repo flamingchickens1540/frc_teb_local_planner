@@ -19,6 +19,7 @@
 #include "wpi/StringRef.h"
 
 #include "practical_socket.h"
+#include "network_config.h"
 
 static teb_local_planner::ObstContainer obstacles{};
 static teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_shared<teb_local_planner::PointRobotFootprint>();
@@ -92,7 +93,7 @@ double constrainAngle(double x) {
 
 class UDPRunnable {
 private:
-    const unsigned short localPortIn = 5800;
+    const unsigned short localPortIn = LOCAL_PORT_IN;
     UDPSocket* socket;
 public:
     UDPRunnable();
@@ -102,20 +103,16 @@ public:
 class NTListener : public ITableListener {
 private:
     std::map<std::string, double*> ntDoubleKeys {
-            {"--------max_vel_x",                       &teb_cfg.robot.max_vel_x},
-            {"--------max_vel_x_backwards",             &teb_cfg.robot.max_vel_x_backwards},
-            {"--------acc_lim_x",                       &teb_cfg.robot.acc_lim_x},
-            {"--------max_vel_theta",                   &teb_cfg.robot.max_vel_theta},
-            {"--------acc_lim_theta",                   &teb_cfg.robot.acc_lim_theta},
-//            {"weight_optimaltime", &teb_cfg.optim.weight_optimaltime},
-//            {"--------goal_position_x",                 &goal_pose.position.x},
-//            {"--------goal_position_y",                 &goal_pose.position.y},
-//            {"--------goal_orientation_z",              &goal_pose.orientation.z},
-            {"--------min_turning_radius",              &teb_cfg.robot.min_turning_radius},
-            {"--------weight_kinematics_forward_drive", &teb_cfg.optim.weight_kinematics_forward_drive}
+            {"max_vel_x",                       &teb_cfg.robot.max_vel_x},
+            {"max_vel_x_backwards",             &teb_cfg.robot.max_vel_x_backwards},
+            {"acc_lim_x",                       &teb_cfg.robot.acc_lim_x},
+            {"max_vel_theta",                   &teb_cfg.robot.max_vel_theta},
+            {"acc_lim_theta",                   &teb_cfg.robot.acc_lim_theta},
+            {"min_turning_radius",              &teb_cfg.robot.min_turning_radius},
+            {"weight_kinematics_forward_drive", &teb_cfg.optim.weight_kinematics_forward_drive}
     };
     std::map<std::string, bool*> ntBoolKeys {
-            {"--------free_goal_vel", &teb_cfg.goal_tolerance.free_goal_vel}
+            {"free_goal_vel", &teb_cfg.goal_tolerance.free_goal_vel}
     };
 public:
     NTListener(shared_ptr<NetworkTable> source);
@@ -125,8 +122,8 @@ public:
 class PlannerRunnable {
 private:
     // UDP
-    const string serverAddress = "10.15.40.2";
-    const unsigned short localPortOut = 5801;
+    const string serverAddress = RIO_ADDR;
+    const unsigned short localPortOut = LOCAL_PORT_OUT;
     UDPSocket* sendSocket;
 
     // TEB

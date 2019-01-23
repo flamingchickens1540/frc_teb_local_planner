@@ -199,7 +199,7 @@ int main() {
     thread plannerThread(&PlannerRunnable::run, PlannerRunnable());
 
     NetworkTable::SetClientMode();
-    NetworkTable::SetTeam(1540);
+    NetworkTable::SetTeam(TEAM_NUMBER);
 
     shared_ptr<NetworkTable> table = NetworkTable::GetTable("SmartDashboard");
     NTListener ntListener(table);
