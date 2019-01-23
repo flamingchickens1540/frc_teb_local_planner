@@ -30,11 +30,10 @@ void UDPRunnable::run() {
                 goal_pose.position.x = reverseDouble(doubleBuffer[5]);
                 goal_pose.position.y = reverseDouble(doubleBuffer[6]);
                 goal_pose.orientation.z = reverseDouble(doubleBuffer[7]);
-                cout << "Goal: " << goal_pose.position.x << " y: " << goal_pose.position.y << " z: " << goal_pose.orientation.z << endl;
                 newPoseTwistReceived = true;
                 pose_twist_goal_mtx.unlock();
             } else {
-                cerr << "Unable to receive data!" << endl;
+                cerr << "UDP ERROR: Unable to receive data!" << endl;
             }
         }
     } catch (SocketException &e) {
@@ -147,7 +146,7 @@ void PlannerRunnable::run() {
                                                              &via_points
                     )
             );
-            cout << "Updated goal and cfg!" << endl;
+            cout << "INFO: Updated TEB configuration!" << endl;
             newCfgReceived = false;
         }
         cfg_mtx.unlock();
