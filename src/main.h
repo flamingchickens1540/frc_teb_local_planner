@@ -109,9 +109,9 @@ private:
             {"--------max_vel_theta",                   &teb_cfg.robot.max_vel_theta},
             {"--------acc_lim_theta",                   &teb_cfg.robot.acc_lim_theta},
 //            {"weight_optimaltime", &teb_cfg.optim.weight_optimaltime},
-            {"--------goal_position_x",                 &goal_pose.position.x},
-            {"--------goal_position_y",                 &goal_pose.position.y},
-            {"--------goal_orientation_z",              &goal_pose.orientation.z},
+//            {"--------goal_position_x",                 &goal_pose.position.x},
+//            {"--------goal_position_y",                 &goal_pose.position.y},
+//            {"--------goal_orientation_z",              &goal_pose.orientation.z},
             {"--------min_turning_radius",              &teb_cfg.robot.min_turning_radius},
             {"--------weight_kinematics_forward_drive", &teb_cfg.optim.weight_kinematics_forward_drive}
     };

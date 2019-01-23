@@ -18,15 +18,19 @@ UDPRunnable::UDPRunnable() {
 
 void UDPRunnable::run() {
     try {
-        double doubleBuffer[5];
+        double doubleBuffer[8];
         while (true) {
-            if (socket->recv(doubleBuffer, sizeof(double) * 5) == sizeof(double) * 5) {
+            if (socket->recv(doubleBuffer, sizeof(double) * 8) == sizeof(double) * 8) {
                 pose_twist_mtx.lock();
                 current_pose.position.x = reverseDouble(doubleBuffer[0]);
                 current_pose.position.y = reverseDouble(doubleBuffer[1]);
                 current_pose.orientation.z = constrainAngle(reverseDouble(doubleBuffer[2])) * 3.141592 / 180;
                 current_twist.linear.x = reverseDouble(doubleBuffer[3]);
                 current_twist.angular.z = reverseDouble(doubleBuffer[4]);
+                goal_pose.position.x = reverseDouble(doubleBuffer[5]);
+                goal_pose.position.y = reverseDouble(doubleBuffer[6]);
+                goal_pose.orientation.z = reverseDouble(doubleBuffer[7]);
+                cout << "Goal: " << goal_pose.position.x << " y: " << goal_pose.position.y << " z: " << goal_pose.orientation.z << endl;
                 newPoseTwistReceived = true;
                 pose_twist_mtx.unlock();
             } else {
