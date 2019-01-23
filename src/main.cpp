@@ -29,7 +29,7 @@ void UDPRunnable::run() {
                 current_twist.angular.z = reverseDouble(doubleBuffer[4]);
                 goal_pose.position.x = reverseDouble(doubleBuffer[5]);
                 goal_pose.position.y = reverseDouble(doubleBuffer[6]);
-                goal_pose.orientation.z = reverseDouble(doubleBuffer[7]);
+                goal_pose.orientation.z = constrainAngle(reverseDouble(doubleBuffer[7]));
                 newPoseTwistReceived = true;
                 pose_twist_goal_mtx.unlock();
             } else {

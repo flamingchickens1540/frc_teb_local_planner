@@ -84,6 +84,7 @@ double reverseDouble(const double inDouble)
     return retVal;
 }
 
+// Constrains an absolute angle in radians between [-M_PI,PI]
 double constrainAngle(double x) {
     x = fmod(x + M_PI, M_PI*2);
     if (x < 0)
