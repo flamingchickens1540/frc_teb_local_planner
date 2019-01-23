@@ -26,12 +26,12 @@ static teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_share
 static teb_local_planner::TebVisualizationPtr visual;
 static teb_local_planner::ViaPointContainer via_points{};
 
-static std::mutex cfg_goal_mtx;
+static std::mutex cfg_mtx;
 static teb_local_planner::TebConfig teb_cfg;
 static fake_geometry_msgs::Pose goal_pose;
 static bool newCfgReceived;
 
-static std::mutex pose_twist_mtx;
+static std::mutex pose_twist_goal_mtx;
 static fake_geometry_msgs::Pose current_pose;
 static fake_geometry_msgs::Twist current_twist;
 static bool newPoseTwistReceived;

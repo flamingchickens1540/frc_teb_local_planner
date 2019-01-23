@@ -21,7 +21,7 @@ void UDPRunnable::run() {
         double doubleBuffer[8];
         while (true) {
             if (socket->recv(doubleBuffer, sizeof(double) * 8) == sizeof(double) * 8) {
-                pose_twist_mtx.lock();
+                pose_twist_goal_mtx.lock();
                 current_pose.position.x = reverseDouble(doubleBuffer[0]);
                 current_pose.position.y = reverseDouble(doubleBuffer[1]);
                 current_pose.orientation.z = constrainAngle(reverseDouble(doubleBuffer[2])) * 3.141592 / 180;
@@ -32,10 +32,9 @@ void UDPRunnable::run() {
                 goal_pose.orientation.z = reverseDouble(doubleBuffer[7]);
                 cout << "Goal: " << goal_pose.position.x << " y: " << goal_pose.position.y << " z: " << goal_pose.orientation.z << endl;
                 newPoseTwistReceived = true;
-                pose_twist_mtx.unlock();
+                pose_twist_goal_mtx.unlock();
             } else {
                 cerr << "Unable to receive data!" << endl;
-                pose_twist_mtx.unlock();
             }
         }
     } catch (SocketException &e) {
@@ -70,10 +69,10 @@ NTListener::NTListener(shared_ptr<NetworkTable> source) {
 }
 
 void NTListener::ValueChanged(ITable *source, wpi::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
-    cfg_goal_mtx.lock();
+    cfg_mtx.lock();
     for (auto const &symbol : ntDoubleKeys) {
 //        if (testKey.equals(symbol.first)) {
-        if (testKey.substr(8).equals(wpi::StringRef(symbol.first).substr(8))) {
+        if (testKey.substr(8).equals(wpi::StringRef(symbol.first).substr(8))) { // TODO: Figure out what was causing issues here
             *symbol.second = value->GetDouble();
             newCfgReceived = true;
         }
@@ -84,7 +83,7 @@ void NTListener::ValueChanged(ITable *source, wpi::StringRef testKey, shared_ptr
             newCfgReceived = true;
         }
     }
-    cfg_goal_mtx.unlock();
+    cfg_mtx.unlock();
 };
 
 PlannerRunnable::PlannerRunnable() {
@@ -113,9 +112,9 @@ PlannerRunnable::PlannerRunnable() {
 void PlannerRunnable::run() {
     while (true) {
         // Copy input data into temporary variables so we don't hold up the other threads
-        pose_twist_mtx.lock();
+        pose_twist_goal_mtx.lock();
         if (!newPoseTwistReceived) {
-            pose_twist_mtx.unlock();
+            pose_twist_goal_mtx.unlock();
             continue;
         }
         teb_local_planner::PoseSE2 temp_current_pose{
@@ -128,15 +127,15 @@ void PlannerRunnable::run() {
                 current_twist.linear.y,
                 current_twist.angular.z
         };
-        newPoseTwistReceived = false;
-        pose_twist_mtx.unlock();
-
-        cfg_goal_mtx.lock();
         teb_local_planner::PoseSE2 temp_goal_pose{
                 goal_pose.position.x,
                 goal_pose.position.y,
                 goal_pose.orientation.z
         };
+        newPoseTwistReceived = false;
+        pose_twist_goal_mtx.unlock();
+
+        cfg_mtx.lock();
         if (newCfgReceived) {
             temp_teb_cfg = new teb_local_planner::TebConfig(teb_cfg); // Copy teb config
             planner = teb_local_planner::PlannerInterfacePtr(
@@ -150,7 +149,7 @@ void PlannerRunnable::run() {
             cout << "Updated goal and cfg!" << endl;
             newCfgReceived = false;
         }
-        cfg_goal_mtx.unlock();
+        cfg_mtx.unlock();
 
         // Actually calculate plan
         fake_geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, start_twist, teb_cfg.goal_tolerance.free_goal_vel);
