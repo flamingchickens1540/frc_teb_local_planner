@@ -71,8 +71,7 @@ NTListener::NTListener(shared_ptr<NetworkTable> source) {
 void NTListener::ValueChanged(ITable *source, wpi::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
     cfg_mtx.lock();
     for (auto const &symbol : ntDoubleKeys) {
-//        if (testKey.equals(symbol.first)) {
-        if (testKey.substr(8).equals(wpi::StringRef(symbol.first).substr(8))) { // TODO: Figure out what was causing issues here
+        if (testKey.equals(symbol.first)) {
             *symbol.second = value->GetDouble();
             newCfgReceived = true;
         }
