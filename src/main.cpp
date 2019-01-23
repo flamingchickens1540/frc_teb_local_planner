@@ -186,24 +186,6 @@ fake_geometry_msgs::Twist PlannerRunnable::plan(
                      temp_teb_cfg->robot.max_vel_theta,
                      temp_teb_cfg->robot.max_vel_x_backwards);
 
-//    planner->
-
-//    cout
-//         << " Free_Goal_Vel: " << temp_teb_cfg->goal_tolerance.free_goal_vel
-//         << " MVX: " << temp_teb_cfg->robot.max_vel_x
-//         << " MVXB: " << temp_teb_cfg->robot.max_vel_x_backwards
-//         << " AX: " << temp_teb_cfg->robot.acc_lim_x
-//         << " MVT: " << temp_teb_cfg->robot.max_vel_theta
-//         << " AT: " << temp_teb_cfg->robot.acc_lim_theta
-//            << endl;
-// cout
-//         << " Linear X: " << start_pose.x()
-//         << " Linear X: " << start_twist.angular.x
-//         << " MVXB: " << temp_teb_cfg->robot.max_vel_x_backwards
-//         << " AX: " << temp_teb_cfg->robot.acc_lim_x
-//         << " MVT: " << temp_teb_cfg->robot.max_vel_theta
-//         << " AT: " << temp_teb_cfg->robot.acc_lim_theta
-//            << endl;
     fake_geometry_msgs::Twist cmd_vel{};
     cmd_vel.linear.x = x;
     cmd_vel.linear.y = y;
@@ -215,12 +197,9 @@ int main() {
     thread udpThread(&UDPRunnable::run, UDPRunnable());
     thread plannerThread(&PlannerRunnable::run, PlannerRunnable());
 
-//    auto ntinst = nt::NetworkTableInstance::GetDefault();
-//    ntinst.StartClientTeam(1540);
     NetworkTable::SetClientMode();
     NetworkTable::SetTeam(1540);
 
-//    auto table = ntinst.GetTable("SmartDashboard");
     shared_ptr<NetworkTable> table = NetworkTable::GetTable("SmartDashboard");
     NTListener ntListener(table);
     table->AddTableListener(&ntListener);
