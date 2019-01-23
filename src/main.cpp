@@ -24,7 +24,7 @@ void UDPRunnable::run() {
                 pose_twist_goal_mtx.lock();
                 current_pose.position.x = reverseDouble(doubleBuffer[0]);
                 current_pose.position.y = reverseDouble(doubleBuffer[1]);
-                current_pose.orientation.z = constrainAngle(reverseDouble(doubleBuffer[2])) * 3.141592 / 180;
+                current_pose.orientation.z = constrainAngle(reverseDouble(doubleBuffer[2]));
                 current_twist.linear.x = reverseDouble(doubleBuffer[3]);
                 current_twist.angular.z = reverseDouble(doubleBuffer[4]);
                 goal_pose.position.x = reverseDouble(doubleBuffer[5]);

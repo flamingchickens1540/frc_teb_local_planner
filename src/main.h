@@ -85,10 +85,10 @@ double reverseDouble(const double inDouble)
 }
 
 double constrainAngle(double x) {
-    x = fmod(x + 180, 360);
+    x = fmod(x + M_PI, M_PI*2);
     if (x < 0)
-        x += 360;
-    return x - 180;
+        x += M_PI*2;
+    return x - M_PI;
 }
 
 class UDPRunnable {
