@@ -135,7 +135,7 @@ void PlannerRunnable::run() {
         pose_twist_goal_mtx.unlock();
 
         cfg_mtx.lock();
-        if (newCfgReceived) {
+        if (newCfgReceived) { // TODO: Does the planner really need to be created again if the config is updated?
             temp_teb_cfg = new teb_local_planner::TebConfig(teb_cfg); // Copy teb config
             planner = teb_local_planner::PlannerInterfacePtr(
                     new teb_local_planner::TebOptimalPlanner(*temp_teb_cfg,
