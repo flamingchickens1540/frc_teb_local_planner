@@ -121,16 +121,18 @@ void PlannerRunnable::run() {
                 current_pose.position.y,
                 current_pose.orientation.z
         };
-        fake_geometry_msgs::Twist start_twist{
-                current_twist.linear.x,
-                current_twist.linear.y,
-                current_twist.angular.z
-        };
+
+        auto start_twist = new geometry_msgs::Twist();
+        start_twist->linear.x = current_twist.linear.x;
+        start_twist->linear.y = current_twist.linear.y;
+        start_twist->angular.z = current_twist.angular.z;
+
         teb_local_planner::PoseSE2 temp_goal_pose{
                 goal_pose.position.x,
                 goal_pose.position.y,
                 goal_pose.orientation.z
         };
+
         newPoseTwistReceived = false;
         pose_twist_goal_mtx.unlock();
 
@@ -151,7 +153,7 @@ void PlannerRunnable::run() {
         cfg_mtx.unlock();
 
         // Actually calculate plan
-        fake_geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, start_twist, teb_cfg.goal_tolerance.free_goal_vel);
+        geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, *start_twist, teb_cfg.goal_tolerance.free_goal_vel);
 
         double cmd_vel_packet[2];
 //        cmd_vel_packet[0] = 0;  // TODO: Add timestamp (or at least incrementing counter)
@@ -162,10 +164,10 @@ void PlannerRunnable::run() {
     }
 }
 
-fake_geometry_msgs::Twist PlannerRunnable::plan(
+geometry_msgs::Twist PlannerRunnable::plan(
         teb_local_planner::PoseSE2 start_pose,
         teb_local_planner::PoseSE2 goal_pose,
-        fake_geometry_msgs::Twist start_twist,
+        geometry_msgs::Twist start_twist,
         bool free_goal_vel) {
 
     auto start = chrono::high_resolution_clock::now();
@@ -185,7 +187,7 @@ fake_geometry_msgs::Twist PlannerRunnable::plan(
                      temp_teb_cfg->robot.max_vel_theta,
                      temp_teb_cfg->robot.max_vel_x_backwards);
 
-    fake_geometry_msgs::Twist cmd_vel{};
+    geometry_msgs::Twist cmd_vel{};
     cmd_vel.linear.x = x;
     cmd_vel.linear.y = y;
     cmd_vel.angular.z = theta;

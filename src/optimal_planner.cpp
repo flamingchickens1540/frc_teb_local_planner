@@ -217,7 +217,7 @@ bool TebOptimalPlanner::optimizeTEB(int iterations_innerloop, int iterations_out
   return true;
 }
 
-void TebOptimalPlanner::setVelocityStart(const fake_geometry_msgs::Twist& vel_start)
+void TebOptimalPlanner::setVelocityStart(const geometry_msgs::Twist& vel_start)
 {
   vel_start_.first = true;
   vel_start_.second.linear.x = vel_start.linear.x;
@@ -225,13 +225,13 @@ void TebOptimalPlanner::setVelocityStart(const fake_geometry_msgs::Twist& vel_st
   vel_start_.second.angular.z = vel_start.angular.z;
 }
 
-void TebOptimalPlanner::setVelocityGoal(const fake_geometry_msgs::Twist& vel_goal)
+void TebOptimalPlanner::setVelocityGoal(const geometry_msgs::Twist& vel_goal)
 {
   vel_goal_.first = true;
   vel_goal_.second = vel_goal;
 }
 
-//bool TebOptimalPlanner::plan(const std::vector<geometry_msgs::PoseStamped>& initial_plan, const fake_geometry_msgs::Twist* start_vel, bool free_goal_vel)
+//bool TebOptimalPlanner::plan(const std::vector<geometry_msgs::PoseStamped>& initial_plan, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
 //{
 ////  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
 //  if (!teb_.isInit())
@@ -264,14 +264,14 @@ void TebOptimalPlanner::setVelocityGoal(const fake_geometry_msgs::Twist& vel_goa
 //}
 
 
-bool TebOptimalPlanner::plan(const tf::Pose& start, const tf::Pose& goal, const fake_geometry_msgs::Twist* start_vel, bool free_goal_vel)
+bool TebOptimalPlanner::plan(const tf::Pose& start, const tf::Pose& goal, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
 {
   PoseSE2 start_(start);
   PoseSE2 goal_(goal);
   return plan(start_, goal_, start_vel);
 }
 
-bool TebOptimalPlanner::plan(const PoseSE2& start, const PoseSE2& goal, const fake_geometry_msgs::Twist* start_vel, bool free_goal_vel)
+bool TebOptimalPlanner::plan(const PoseSE2& start, const PoseSE2& goal, const geometry_msgs::Twist* start_vel, bool free_goal_vel)
 {	
 //  ROS_ASSERT_MSG(initialized_, "Call initialize() first.");
   if (!teb_.isInit())
@@ -1110,7 +1110,7 @@ void TebOptimalPlanner::extractVelocity(const PoseSE2& pose1, const PoseSE2& pos
 bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega) const
 {
 
-//    std::vector<fake_geometry_msgs::Twist> profile;
+//    std::vector<geometry_msgs::Twist> profile;
 //    std::vector<double_t> delta_t;
 //    getVelocityProfile(profile, delta_t);
 //    for (int i=0; i< profile.size(); i++) {
@@ -1140,7 +1140,7 @@ bool TebOptimalPlanner::getVelocityCommand(double& vx, double& vy, double& omega
   return true;
 }
 
-void TebOptimalPlanner::getVelocityProfile(std::vector<fake_geometry_msgs::Twist>& velocity_profile, std::vector<double_t>& delta_t) const
+void TebOptimalPlanner::getVelocityProfile(std::vector<geometry_msgs::Twist>& velocity_profile, std::vector<double_t>& delta_t) const
 {
   int n = teb_.sizePoses();
   velocity_profile.resize( n+1 );

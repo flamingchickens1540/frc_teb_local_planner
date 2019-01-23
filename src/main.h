@@ -33,7 +33,7 @@ static bool newCfgReceived;
 
 static std::mutex pose_twist_goal_mtx;
 static fake_geometry_msgs::Pose current_pose;
-static fake_geometry_msgs::Twist current_twist;
+static geometry_msgs::Twist current_twist;
 static bool newPoseTwistReceived;
 
 static long long counter = 0;
@@ -134,10 +134,10 @@ private:
     teb_local_planner::PlannerInterfacePtr planner;
     teb_local_planner::TebConfig* temp_teb_cfg;
 
-    fake_geometry_msgs::Twist plan(
+    geometry_msgs::Twist plan(
             teb_local_planner::PoseSE2 start_pose,
             teb_local_planner::PoseSE2 goal_pose,
-            fake_geometry_msgs::Twist start_twist,
+            geometry_msgs::Twist start_twist,
             bool free_goal_vel);
 public:
     PlannerRunnable();
