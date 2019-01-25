@@ -23,8 +23,7 @@
 
 static teb_local_planner::ObstContainer obstacles{};
 static teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_shared<teb_local_planner::PointRobotFootprint>();
-static teb_local_planner::TebVisualizationPtr visual;
-static teb_local_planner::ViaPointContainer via_points{};
+//static teb_local_planner::ViaPointContainer via_points = nullptr;
 
 static std::mutex cfg_mtx;
 static teb_local_planner::TebConfig teb_cfg;

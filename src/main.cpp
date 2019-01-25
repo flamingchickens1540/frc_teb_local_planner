@@ -100,8 +100,8 @@ PlannerRunnable::PlannerRunnable() {
             new teb_local_planner::TebOptimalPlanner(*temp_teb_cfg,
                                                      &obstacles,
                                                      robot_model,
-                                                     visual,
-                                                     &via_points
+                                                     nullptr,
+                                                     nullptr
             )
     );
 
@@ -142,8 +142,8 @@ void PlannerRunnable::run() {
                     new teb_local_planner::TebOptimalPlanner(*temp_teb_cfg,
                                                              &obstacles,
                                                              robot_model,
-                                                             visual,
-                                                             &via_points
+                                                             nullptr,
+                                                             nullptr
                     )
             );
             cout << "INFO: Updated TEB configuration!" << endl;
