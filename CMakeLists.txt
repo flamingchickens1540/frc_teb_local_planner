@@ -64,29 +64,29 @@ set(NT_LIBRARIES
         blas.so.3
         gfortran.so.3
 
-        wpiHal.so
-        wpilibc.so
-        wpiHal.so
-        cameraserver.so
-        cscore.so
+#        wpiHal.so
+#        wpilibc.so
+#        wpiHal.so
+#        cameraserver.so
+#        cscore.so
         ntcore.so
         wpiutil.so
-        opencv_ml.so
-        opencv_objdetect.so
-        opencv_shape.so
-        opencv_stitching.so
-        opencv_superres.so
-        opencv_videostab.so
-        opencv_calib3d.so
-        opencv_features2d.so
-        opencv_highgui.so
-        opencv_videoio.so
-        opencv_imgcodecs.so
-        opencv_video.so
-        opencv_photo.so
-        opencv_imgproc.so
-        opencv_flann.so
-        opencv_core.so
+#        opencv_ml.so
+#        opencv_objdetect.so
+#        opencv_shape.so
+#        opencv_stitching.so
+#        opencv_superres.so
+#        opencv_videostab.so
+#        opencv_calib3d.so
+#        opencv_features2d.so
+#        opencv_highgui.so
+#        opencv_videoio.so
+#        opencv_imgcodecs.so
+#        opencv_video.so
+#        opencv_photo.so
+#        opencv_imgproc.so
+#        opencv_flann.so
+#        opencv_core.so
         )
 
 set(EXTERNAL_LIBS

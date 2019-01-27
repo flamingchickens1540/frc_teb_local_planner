@@ -69,10 +69,10 @@ NTListener::NTListener(shared_ptr<NetworkTable> source) {
 
 void NTListener::ValueChanged(ITable *source, wpi::StringRef testKey, shared_ptr<nt::Value> value, bool isNew) {
     cfg_mtx.lock();
-    if (testKey.equals("teb-reset") && value->GetBoolean()) {
+    if (testKey.equals("TEBReset") && value->GetBoolean()) {
         newCfgReceived = true;
-        shared_ptr<NetworkTable> table = NetworkTable::GetTable("SmartDashboard");
-        table->PutBoolean("teb-reset", false);
+        shared_ptr<NetworkTable> table = NetworkTable::GetTable(NT_NAME);
+        table->PutBoolean("TEBReset", false);
     }
     for (auto const &symbol : ntDoubleKeys) {
         if (testKey.equals(symbol.first)) {
@@ -205,7 +205,7 @@ int main() {
     NetworkTable::SetClientMode();
     NetworkTable::SetTeam(TEAM_NUMBER);
 
-    shared_ptr<NetworkTable> table = NetworkTable::GetTable("SmartDashboard");
+    shared_ptr<NetworkTable> table = NetworkTable::GetTable(NT_NAME);
     NTListener ntListener(table);
     table->AddTableListener(&ntListener);
 
