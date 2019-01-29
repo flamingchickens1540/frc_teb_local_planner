@@ -28,6 +28,7 @@ static teb_local_planner::RobotFootprintModelPtr robot_model = boost::make_share
 static std::mutex cfg_mtx;
 static teb_local_planner::TebConfig teb_cfg;
 static geometry_msgs::Pose goal_pose;
+static Eigen::Vector2d via_point;
 static bool newCfgReceived;
 
 static std::mutex pose_twist_goal_mtx;
@@ -134,6 +135,7 @@ private:
             teb_local_planner::PoseSE2 start_pose,
             teb_local_planner::PoseSE2 goal_pose,
             geometry_msgs::Twist start_twist,
+            Eigen::Vector2d via_point,
             bool free_goal_vel);
 public:
     PlannerRunnable();

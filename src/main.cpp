@@ -18,9 +18,9 @@ UDPRunnable::UDPRunnable() {
 
 void UDPRunnable::run() {
     try {
-        double doubleBuffer[8];
+        double doubleBuffer[10];
         while (true) {
-            if (socket->recv(doubleBuffer, sizeof(double) * 8) == sizeof(double) * 8) {
+            if (socket->recv(doubleBuffer, sizeof(double) * 10) == sizeof(double) * 10) {
                 pose_twist_goal_mtx.lock();
                 current_pose.position.x = reverseDouble(doubleBuffer[0]);
                 current_pose.position.y = reverseDouble(doubleBuffer[1]);
@@ -30,6 +30,8 @@ void UDPRunnable::run() {
                 goal_pose.position.x = reverseDouble(doubleBuffer[5]);
                 goal_pose.position.y = reverseDouble(doubleBuffer[6]);
                 goal_pose.orientation.z = constrainAngle(reverseDouble(doubleBuffer[7]));
+                via_point[0] = reverseDouble(doubleBuffer[8]);
+                via_point[1] = reverseDouble(doubleBuffer[9]);
                 newPoseTwistReceived = true;
                 pose_twist_goal_mtx.unlock();
             } else {
@@ -137,6 +139,11 @@ void PlannerRunnable::run() {
                 goal_pose.orientation.z
         };
 
+        Eigen::Vector2d temp_via_point(
+                via_point[0],
+                via_point[1]
+        );
+
         newPoseTwistReceived = false;
         pose_twist_goal_mtx.unlock();
 
@@ -157,7 +164,7 @@ void PlannerRunnable::run() {
         cfg_mtx.unlock();
 
         // Actually calculate plan
-        geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, *start_twist, teb_cfg.goal_tolerance.free_goal_vel);
+        geometry_msgs::Twist cmd_vel = plan(temp_current_pose, temp_goal_pose, *start_twist, temp_via_point, teb_cfg.goal_tolerance.free_goal_vel);
 
         double cmd_vel_packet[2];
 //        cmd_vel_packet[0] = 0;  // TODO: Add timestamp (or at least incrementing counter)
@@ -172,8 +179,15 @@ geometry_msgs::Twist PlannerRunnable::plan(
         teb_local_planner::PoseSE2 start_pose,
         teb_local_planner::PoseSE2 goal_pose,
         geometry_msgs::Twist start_twist,
+        Eigen::Vector2d via_point,
         bool free_goal_vel) {
 
+
+
+    teb_local_planner::ViaPointContainer via_points;
+    via_points.push_back(via_point);
+    via_points.push_back(via_point);
+    boost::dynamic_pointer_cast<teb_local_planner::TebOptimalPlanner>(planner)->setViaPoints(&via_points);
     auto start = chrono::high_resolution_clock::now();
     bool success = planner->plan(start_pose, goal_pose, &start_twist, free_goal_vel); // Calculate the plan
     if (!success) {
