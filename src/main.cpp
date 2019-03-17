@@ -185,8 +185,8 @@ geometry_msgs::Twist PlannerRunnable::plan(
 
 
     teb_local_planner::ViaPointContainer via_points;
-    via_points.push_back(via_point);
-    via_points.push_back(via_point);
+//    via_points.push_back(via_point);
+//    via_points.push_back(via_point);
     boost::dynamic_pointer_cast<teb_local_planner::TebOptimalPlanner>(planner)->setViaPoints(&via_points);
     auto start = chrono::high_resolution_clock::now();
     bool success = planner->plan(start_pose, goal_pose, &start_twist, free_goal_vel); // Calculate the plan
